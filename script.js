@@ -15,8 +15,8 @@ const openAi = new OpenAIApi(
 );
 
 async function main() {
-  console.log(colors.bold.green("Welcome to the Job assistance program!"));
-  console.log(colors.bold.green("You can start chatting with the bot."));
+  console.log(colors.bold.green("Welcome to the Job assistance program!!!"));
+  console.log(colors.bold.green("You can start chatting with the bot!!"));
 
   const chatHistory = []; // Store conversation history
 
