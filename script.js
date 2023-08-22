@@ -1,11 +1,19 @@
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
 import { config } from "dotenv";
 import Configuration from "openai";
 import OpenAIApi from "openai";
-import readlineSync from "readline-sync";
-import colors from "colors";
 
 // Load environment variables
 config();
+
+const app = express();
+const PORT = 3001; // This can be any free port
+
+// Middleware
+app.use(cors()); // Enable CORS for all routes
+app.use(bodyParser.json()); // for parsing application/json
 
 // Create OpenAI instance
 const openAi = new OpenAIApi(
@@ -14,57 +22,78 @@ const openAi = new OpenAIApi(
   })
 );
 
-async function main() {
-  console.log(colors.bold.green("Welcome to the Job assistance program!!!"));
-  console.log(colors.bold.green("You can start chatting with the bot!!"));
+app.post("/ask", async (req, res) => {
+  const { userInput, chatHistory } = req.body;
 
-  const chatHistory = []; // Store conversation history
+  const messages = chatHistory.map(([role, content]) => ({
+    role,
+    content,
+  }));
+  messages.push({ role: "user", content: userInput });
 
-  while (true) {
-    const userInput = readlineSync.question(colors.yellow("You: "));
+  try {
+    const response = await openAi.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: messages,
+    });
 
-    try {
-      // Construct messages by iterating over the history
-      const messages = chatHistory.map(([role, content]) => ({
-        role,
-        content,
-      }));
+    const completionText = response.choices[0].message.content;
 
-      // Add latest user input
-      messages.push({ role: "user", content: userInput });
-
-      // Call the API with user input & history
-      const response = await openAi.chat.completions.create({
-        model: "gpt-3.5-turbo",
-        messages: messages,
-      });
-      const completionText = response.choices[0].message.content;
-
-      if (
-        response &&
-        response.choices &&
-        response.choices.length > 0 &&
-        response.choices[0].message
-      ) {
-        console.log(response.choices[0].message.content);
-      } else {
-        console.log("Unexpected response structure:", response);
-      }
-
-      if (userInput.toLowerCase() === "exit") {
-        console.log(colors.green("Bot: ") + completionText);
-        return;
-      }
-
-      console.log(colors.green("Bot: ") + completionText);
-
-      // Update history with user input and assistant response
-      chatHistory.push(["user", userInput]);
-      chatHistory.push(["assistant", completionText]);
-    } catch (error) {
-      console.error(colors.red(error));
-    }
+    res.json({
+      response: completionText,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
-}
+});
 
-main();
+app.post("/generateCoverLetter", async (req, res) => {
+  const {
+    applicantName,
+    jobTitle,
+    companyName,
+    skills,
+    relevantExperience,
+    interestInRole,
+    interestInCompany,
+    closingRemarks,
+  } = req.body;
+
+  const messages = [
+    {
+      role: "system",
+      content: "You are a helpful assistant.",
+    },
+    {
+      role: "user",
+      content: `
+      Generate a cover letter for ${applicantName}, applying for the position of ${jobTitle} at ${companyName}. 
+      Skills: ${skills.join(", ")}.
+      Experience: ${relevantExperience}.
+      Reason for interest in the role: ${interestInRole}.
+      Why they are interested in the company: ${interestInCompany}.
+      Closing remarks: ${closingRemarks}.
+    `,
+    },
+  ];
+
+  try {
+    const response = await openAi.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: messages,
+    });
+
+    const coverLetter = response.choices[0].message.content.trim();
+    res.json({
+      coverLetter: coverLetter,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server started on http://localhost:${PORT}`);
+});
