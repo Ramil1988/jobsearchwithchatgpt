@@ -5,17 +5,14 @@ import { config } from "dotenv";
 import Configuration from "openai";
 import OpenAIApi from "openai";
 
-// Load environment variables
 config();
 
 const app = express();
-const PORT = 3001; // This can be any free port
+const PORT = 3001; 
 
-// Middleware
-app.use(cors()); // Enable CORS for all routes
-app.use(bodyParser.json()); // for parsing application/json
+app.use(cors()); 
+app.use(bodyParser.json()); 
 
-// Create OpenAI instance
 const openAi = new OpenAIApi(
   new Configuration({
     apiKey: process.env.OPEN_AI_API_KEY,
@@ -58,7 +55,28 @@ app.post("/generateCoverLetter", async (req, res) => {
     interestInRole,
     interestInCompany,
     closingRemarks,
+    language,
   } = req.body;
+
+  let instruction = `
+    Generate a cover letter for ${applicantName}, applying for the position of ${jobTitle} at ${companyName}. 
+    Skills: ${skills.join(", ")}.
+    Experience: ${relevantExperience}.
+    Reason for interest in the role: ${interestInRole}.
+    Why they are interested in the company: ${interestInCompany}.
+    Closing remarks: ${closingRemarks}.
+  `;
+
+  if (language === "French") {
+    instruction = `
+    Générez une lettre de motivation pour ${applicantName}, postulant au poste de ${jobTitle} chez ${companyName}. 
+    Compétences: ${skills.join(", ")}.
+    Expérience: ${relevantExperience}.
+    Raison de l'intérêt pour le poste: ${interestInRole}.
+    Pourquoi ils sont intéressés par l'entreprise: ${interestInCompany}.
+    Remarques finales: ${closingRemarks}.
+    `;
+  }
 
   const messages = [
     {
@@ -67,14 +85,7 @@ app.post("/generateCoverLetter", async (req, res) => {
     },
     {
       role: "user",
-      content: `
-      Generate a cover letter for ${applicantName}, applying for the position of ${jobTitle} at ${companyName}. 
-      Skills: ${skills.join(", ")}.
-      Experience: ${relevantExperience}.
-      Reason for interest in the role: ${interestInRole}.
-      Why they are interested in the company: ${interestInCompany}.
-      Closing remarks: ${closingRemarks}.
-    `,
+      content: instruction,
     },
   ];
 
