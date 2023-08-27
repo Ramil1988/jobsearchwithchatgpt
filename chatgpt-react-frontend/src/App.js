@@ -29,7 +29,7 @@ function App() {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:3001/generateCoverLetter",
+        "https://jobsearchwithchatgpt.onrender.com/generateCoverLetter",
         {
           method: "POST",
           headers: {

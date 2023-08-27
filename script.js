@@ -1,6 +1,6 @@
 import express from "express";
-import bodyParser from "body-parser";
 import cors from "cors";
+import bodyParser from "body-parser";
 import { config } from "dotenv";
 import Configuration from "openai";
 import OpenAIApi from "openai";
@@ -10,8 +10,36 @@ config();
 const app = express();
 const PORT = 3001;
 
-app.use(cors());
 app.use(bodyParser.json());
+
+app.use(cors());
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://monctonservices-com.onrender.com",
+];
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  next();
+});
 
 const openAi = new OpenAIApi(
   new Configuration({
@@ -76,7 +104,7 @@ app.post("/generateCoverLetter", async (req, res) => {
     lengthInstruction = "Keep it concise.";
   } else if (length === "Long") {
     lengthInstruction = "Elaborate more on each point.";
-  } 
+  }
 
   // Base instruction
   let instruction = `
