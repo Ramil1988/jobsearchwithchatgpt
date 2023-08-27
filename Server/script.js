@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import { config } from "dotenv";
 import Configuration from "openai";
 import OpenAIApi from "openai";
+global.AbortController = require("abort-controller");
 
 config();
 
