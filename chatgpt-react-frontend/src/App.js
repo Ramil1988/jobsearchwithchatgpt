@@ -8,6 +8,7 @@ import {
   HeadingLevel,
   AlignmentType,
 } from "docx";
+import { AbortController } from "node-abort-controller";
 
 function App() {
   const [applicantName, setApplicantName] = useState("");
@@ -24,12 +25,16 @@ function App() {
   const [tone, setTone] = useState("Professional");
   const [length, setLength] = useState("Medium");
   const [jobDescription, setJobDescription] = useState("");
+  global.AbortController = AbortController;
 
   const handleSubmit = async () => {
+    const controller = new AbortController();
+    const { signal } = controller;
     setLoading(true);
     try {
       const response = await fetch(
-        "https://jobsearchwithchatgpt.onrender.com/generateCoverLetter",
+        ("https://jobsearchwithchatgpt.onrender.com/generateCoverLetter",
+        { signal }),
         {
           method: "POST",
           headers: {
