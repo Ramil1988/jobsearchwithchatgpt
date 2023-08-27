@@ -8,10 +8,10 @@ import OpenAIApi from "openai";
 config();
 
 const app = express();
-const PORT = 3001; 
+const PORT = 3001;
 
-app.use(cors()); 
-app.use(bodyParser.json()); 
+app.use(cors());
+app.use(bodyParser.json());
 
 const openAi = new OpenAIApi(
   new Configuration({
@@ -48,34 +48,77 @@ app.post("/ask", async (req, res) => {
 app.post("/generateCoverLetter", async (req, res) => {
   const {
     applicantName,
+    applicantPhoneNumber,
+    applicantEmail,
     jobTitle,
     companyName,
     skills,
     relevantExperience,
-    interestInRole,
-    interestInCompany,
-    closingRemarks,
     language,
+    tone,
+    length,
+    jobDescription,
   } = req.body;
 
+  // Instructions modifier based on tone
+  let toneInstruction = "";
+  if (tone === "Casual") {
+    toneInstruction = "Write the cover letter in a casual style.";
+  } else if (tone === "Friendly") {
+    toneInstruction = "Write the cover letter in a friendly manner.";
+  } else {
+    toneInstruction = "Write the cover letter in a professional manner.";
+  }
+
+  // Adjusting length
+  let lengthInstruction = "";
+  if (length === "Short") {
+    lengthInstruction = "Keep it concise.";
+  } else if (length === "Long") {
+    lengthInstruction = "Elaborate more on each point.";
+  } 
+
+  // Base instruction
   let instruction = `
-    Generate a cover letter for ${applicantName}, applying for the position of ${jobTitle} at ${companyName}. 
-    Skills: ${skills.join(", ")}.
-    Experience: ${relevantExperience}.
-    Reason for interest in the role: ${interestInRole}.
-    Why they are interested in the company: ${interestInCompany}.
-    Closing remarks: ${closingRemarks}.
-  `;
+Generate a cover letter for:
+Name: ${applicantName}
+Phone: ${applicantPhoneNumber}
+Email: ${applicantEmail}
+
+Addressing to:
+Company: ${companyName}
+Position: ${jobTitle}
+
+Details:
+Skills: ${skills.join(", ")}
+Experience: ${relevantExperience}
+Job description they are applying for: ${jobDescription}. Adjust the cover letter to this description accordingly.
+
+Format: Start with the applicant's name, phone number, and email at the top. Address the letter to the company and position. Include skills, experience, interest in the role, and company. Come with ideas on why are you interested in the ${companyName} and in the  ${jobTitle}.
+
+${toneInstruction} ${lengthInstruction}
+`;
 
   if (language === "French") {
     instruction = `
-    Générez une lettre de motivation pour ${applicantName}, postulant au poste de ${jobTitle} chez ${companyName}. 
-    Compétences: ${skills.join(", ")}.
-    Expérience: ${relevantExperience}.
-    Raison de l'intérêt pour le poste: ${interestInRole}.
-    Pourquoi ils sont intéressés par l'entreprise: ${interestInCompany}.
-    Remarques finales: ${closingRemarks}.
-    `;
+Générez une lettre de motivation pour :
+Nom : ${applicantName}
+Téléphone : ${applicantPhoneNumber}
+E-mail : ${applicantEmail}
+
+Adresse à :
+Entreprise : ${companyName}
+Poste : ${jobTitle}
+
+Détails :
+Compétences : ${skills.join(", ")}
+Expérience : ${relevantExperience}
+Description du poste pour lequel ils postulent : ${jobDescription}. Adaptez la lettre de motivation à cette description en conséquence.
+
+Format : Commencez par le nom du candidat, son numéro de téléphone et son e-mail en haut de la page. Adressez la lettre à l'entreprise et au poste en question. Incluez les compétences, l'expérience, l'intérêt pour le poste et pour l'entreprise. Venez avec des idées sur les raisons pour lesquelles vous êtes intéressé par ${companyName} et par ${jobTitle}.
+
+${toneInstruction} ${lengthInstruction}
+  `;
   }
 
   const messages = [

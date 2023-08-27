@@ -1,19 +1,29 @@
 import { useState } from "react";
 import styled, { keyframes } from "styled-components";
+import {
+  Document,
+  Packer,
+  Paragraph,
+  TextRun,
+  HeadingLevel,
+  AlignmentType,
+} from "docx";
 
 function App() {
   const [applicantName, setApplicantName] = useState("");
+  const [applicantPhoneNumber, setApplicantPhoneNumber] = useState("");
+  const [applicantEmail, setApplicantEmail] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [skills, setSkills] = useState("");
   const [relevantExperience, setRelevantExperience] = useState("");
-  const [interestInRole, setInterestInRole] = useState("");
-  const [interestInCompany, setInterestInCompany] = useState("");
-  const [closingRemarks, setClosingRemarks] = useState("");
   const [coverLetter, setCoverLetter] = useState("");
   const [language, setLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
+  const [tone, setTone] = useState("Professional");
+  const [length, setLength] = useState("Medium");
+  const [jobDescription, setJobDescription] = useState("");
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -27,14 +37,16 @@ function App() {
           },
           body: JSON.stringify({
             applicantName,
+            applicantPhoneNumber,
+            applicantEmail,
             jobTitle,
             companyName,
             skills: skills.split(",").map((skill) => skill.trim()),
             relevantExperience,
-            interestInRole,
-            interestInCompany,
-            closingRemarks,
+            jobDescription,
             language,
+            tone,
+            length,
           }),
         }
       );
@@ -60,23 +72,119 @@ function App() {
       );
   };
 
+  const convertHtmlToDocxParagraphs = (htmlString) => {
+    const div = document.createElement("div");
+    div.innerHTML = htmlString;
+
+    const parseNode = (node) => {
+      if (node.nodeType === 3) {
+        return new TextRun(node.nodeValue);
+      }
+
+      if (node.nodeType === 1) {
+        const children = Array.from(node.childNodes).map(parseNode);
+        switch (node.tagName.toLowerCase()) {
+          case "b":
+            return new TextRun({ children, bold: true });
+          case "i":
+            return new TextRun({ children, italic: true });
+          default:
+            return new TextRun({ children });
+        }
+      }
+
+      return null;
+    };
+
+    return Array.from(div.childNodes).map(parseNode);
+  };
+
+  const generateDocx = () => {
+    const coverLetterParagraphs = convertHtmlToDocxParagraphs(coverLetter);
+
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph({
+              text: "Cover Letter",
+              heading: HeadingLevel.HEADING_1,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `${applicantName}`,
+                  bold: true,
+                }),
+                new TextRun(`\n${applicantPhoneNumber}`),
+                new TextRun(`\n${applicantEmail}`),
+              ],
+            }),
+            new Paragraph({
+              text: `\nDear Hiring Manager at ${companyName},`,
+              bold: true,
+            }),
+            ...coverLetterParagraphs,
+          ],
+        },
+      ],
+    });
+
+    Packer.toBlob(doc).then((blob) => {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "cover_letter.docx";
+      anchor.click();
+
+      URL.revokeObjectURL(url);
+    });
+  };
+
   return (
     <AppContainer>
-      <h1>Welcome to the Job assistance program!!!</h1>
+      <h1>Welcome to the Job assistance program!</h1>
       <h2>Create your cover letter</h2>
 
       <ContentContainer>
         <FormContainer>
-          <div>
-            <Label>Choose language for Cover letter:</Label>
-            <DropdownSelect
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-            >
-              <option value="English">English</option>
-              <option value="French">French</option>
-            </DropdownSelect>
-          </div>
+          <h3>Configuration:</h3>
+          <ConfigurationContainer>
+            <div>
+              <Label>Language for Cover letter:</Label>
+              <DropdownSelect
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+              >
+                <option value="English">English</option>
+                <option value="French">French</option>
+              </DropdownSelect>
+            </div>
+            <div>
+              <Label>Tone:</Label>
+              <DropdownSelect
+                value={tone}
+                onChange={(e) => setTone(e.target.value)}
+              >
+                <option value="Professional">Professional</option>
+                <option value="Friendly">Friendly</option>
+                <option value="Casual">Casual</option>
+              </DropdownSelect>
+            </div>
+            <div>
+              <Label>Length:</Label>
+              <DropdownSelect
+                value={length}
+                onChange={(e) => setLength(e.target.value)}
+              >
+                <option value="Short">Short</option>
+                <option value="Long">Long</option>
+              </DropdownSelect>
+            </div>
+          </ConfigurationContainer>
+          <h3>Information about you:</h3>
           <div>
             <Label>Your Name:</Label>
             <InputField
@@ -85,6 +193,38 @@ function App() {
               onChange={(e) => setApplicantName(e.target.value)}
             />
           </div>
+          <div>
+            <Label>Your Phone number:</Label>
+            <InputField
+              type="text"
+              value={applicantPhoneNumber}
+              onChange={(e) => setApplicantPhoneNumber(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label>Your email:</Label>
+            <InputField
+              type="text"
+              value={applicantEmail}
+              onChange={(e) => setApplicantEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label>Your skills (comma-separated):</Label>
+            <InputField
+              type="text"
+              value={skills}
+              onChange={(e) => setSkills(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label>Your Experience:</Label>
+            <TextareaField
+              value={relevantExperience}
+              onChange={(e) => setRelevantExperience(e.target.value)}
+            />
+          </div>
+          <h3>Information about vacancy:</h3>
           <div>
             <Label>Job Title:</Label>
             <InputField
@@ -102,39 +242,10 @@ function App() {
             />
           </div>
           <div>
-            <Label>Skills (comma-separated):</Label>
-            <InputField
-              type="text"
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Relevant Experience:</Label>
+            <Label>Job Description:</Label>
             <TextareaField
-              value={relevantExperience}
-              onChange={(e) => setRelevantExperience(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Why are you interested in the role?</Label>
-            <TextareaField
-              value={interestInRole}
-              onChange={(e) => setInterestInRole(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Why are you interested in the company?</Label>
-            <TextareaField
-              value={interestInCompany}
-              onChange={(e) => setInterestInCompany(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Closing remarks:</Label>
-            <TextareaField
-              value={closingRemarks}
-              onChange={(e) => setClosingRemarks(e.target.value)}
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
             />
           </div>
           <SendButton onClick={handleSubmit}>
@@ -152,13 +263,26 @@ function App() {
         ) : coverLetter ? (
           <CoverLetterContainer>
             <h3>Your Cover Letter:</h3>
-            <p>{coverLetter}</p>
+            <div dangerouslySetInnerHTML={{ __html: coverLetter }} />
             <CopyButton onClick={handleCopyText}>
               Copy your Cover letter
             </CopyButton>
             {copySuccess && (
               <CopySuccessMessage>{copySuccess}</CopySuccessMessage>
             )}
+            {/* <CopyButton
+              onClick={() =>
+                generateDocx(
+                  applicantName,
+                  applicantPhoneNumber,
+                  applicantEmail,
+                  companyName,
+                  coverLetter
+                )
+              }
+            >
+              Download as DOCX
+            </CopyButton> */}
           </CoverLetterContainer>
         ) : null}
       </ContentContainer>
@@ -199,7 +323,7 @@ const Spinner = styled.div`
 const AppContainer = styled.div`
   text-align: center;
   padding-top: 50px;
-  max-width: 1200px;
+  max-width: 95vw;
   margin: 0 auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   background-color: #fff;
@@ -212,6 +336,20 @@ const ContentContainer = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   padding: 0 50px;
+`;
+
+const ConfigurationContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  justify-content: space-between;
+  gap: 60px;
+
+  & > div {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+  }
 `;
 
 const FormContainer = styled.div`
@@ -302,7 +440,6 @@ const Label = styled.label`
 `;
 
 const SendButton = styled.button`
-  
   width: 107%;
   cursor: pointer;
   background: linear-gradient(90deg, #3498db, #8e44ad);
