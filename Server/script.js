@@ -4,7 +4,8 @@ import bodyParser from "body-parser";
 import { config } from "dotenv";
 import Configuration from "openai";
 import OpenAIApi from "openai";
-global.AbortController = require("abort-controller");
+import AbortController from "abort-controller";
+globalThis.AbortController = AbortController;
 
 config();
 
@@ -15,10 +16,7 @@ app.use(bodyParser.json());
 
 app.use(cors());
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://monctonservices-com.onrender.com",
-];
+const allowedOrigins = ["http://localhost:3000"];
 app.use(
   cors({
     origin: function (origin, callback) {
