@@ -4,10 +4,10 @@ import bodyParser from "body-parser";
 import { config } from "dotenv";
 import Configuration from "openai";
 import OpenAIApi from "openai";
-import AbortController from "abort-controller";
-globalThis.AbortController = AbortController;
+import { AbortController } from "node-abort-controller";
 
 config();
+global.AbortController = AbortController;
 
 const app = express();
 const PORT = 3001;
