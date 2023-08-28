@@ -347,7 +347,7 @@ ${toneInstruction} ${lengthInstruction}
             {copySuccess && (
               <CopySuccessMessage>{copySuccess}</CopySuccessMessage>
             )}
-            {/* <CopyButton
+            <CopyButton
               onClick={() =>
                 generateDocx(
                   applicantName,
@@ -359,7 +359,7 @@ ${toneInstruction} ${lengthInstruction}
               }
             >
               Download as DOCX
-            </CopyButton> */}
+            </CopyButton>
           </CoverLetterContainer>
         ) : null}
       </ContentContainer>
@@ -559,7 +559,7 @@ const SendButton = styled.button`
 `;
 
 const CopyButton = styled.button`
-  margin-top: 20px;
+  margin: 20px;
   padding: 10px;
   cursor: pointer;
   background-color: #3498db;
