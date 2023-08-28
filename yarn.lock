@@ -9,6 +9,18 @@
   dependencies:
     "numeric" "^1.2.6"
 
+"node-bin-setup@^1.0.0":
+  "integrity" "sha512-opgw9iSCAzT2+6wJOETCpeRYAQxSopqQ2z+N6BXwIMsQQ7Zj5M8MaafQY8JMlolRR6R1UXg2WmhKp0p9lSOivg=="
+  "resolved" "https://registry.npmjs.org/node-bin-setup/-/node-bin-setup-1.1.3.tgz"
+  "version" "1.1.3"
+
+"node@16.6.1":
+  "integrity" "sha512-qlIQ5vkAAMP+T1bYivwngIqZlUzerPSeaeAQVUvyQ2XZ8WN86ZUdzcpkW/iuEnP9paNcpAsA4p9yCsfrdjG7YQ=="
+  "resolved" "https://registry.npmjs.org/node/-/node-16.6.1.tgz"
+  "version" "16.6.1"
+  dependencies:
+    "node-bin-setup" "^1.0.0"
+
 "numeric@^1.2.6":
   "integrity" "sha512-avBiDAP8siMa7AfJgYyuxw1oyII4z2sswS23+O+ZfV28KrtNzy0wxUFwi4f3RyM4eeeXNs1CThxR7pb5QQcMiw=="
   "resolved" "https://registry.npmjs.org/numeric/-/numeric-1.2.6.tgz"
