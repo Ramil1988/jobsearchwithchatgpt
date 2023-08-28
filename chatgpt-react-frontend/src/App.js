@@ -406,19 +406,29 @@ const AppContainer = styled.div`
   background-color: #fff;
   border-radius: 8px;
   padding-bottom: 50px;
+
+  @media (max-width: 768px) {
+    max-width: 100vw;
+    padding: 20px;
+  }
 `;
 
 const ContentContainer = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
   padding: 0 50px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const ConfigurationContainer = styled.div`
   display: flex;
   flex-direction: row;
-
   justify-content: space-between;
   gap: 60px;
 
@@ -426,6 +436,11 @@ const ConfigurationContainer = styled.div`
     flex: 1;
     display: flex;
     justify-content: space-between;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 20px;
   }
 `;
 
@@ -440,6 +455,10 @@ const FormContainer = styled.div`
     flex-direction: column;
     gap: 8px;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const DropdownSelect = styled.select`
@@ -450,6 +469,10 @@ const DropdownSelect = styled.select`
   font-size: 16px;
   appearance: none;
   background-color: #ffffff;
+
+  @media (max-width: 768px) {
+    width: 60%;
+  }
 `;
 
 const CoverLetterContainer = styled.div`
@@ -461,6 +484,11 @@ const CoverLetterContainer = styled.div`
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: 768px) {
+    width: 80vw;
+    margin-top: 20px;
+  }
 `;
 
 const InputField = styled.input`
