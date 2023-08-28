@@ -8,7 +8,7 @@ import {
   HeadingLevel,
   AlignmentType,
 } from "docx";
-import { AbortController } from "node-abort-controller";
+import { OPENAI_API_KEY } from "./config.local";
 
 function App() {
   const [applicantName, setApplicantName] = useState("");
@@ -23,41 +23,113 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
   const [tone, setTone] = useState("Professional");
-  const [length, setLength] = useState("Medium");
+  const [length, setLength] = useState("Short");
   const [jobDescription, setJobDescription] = useState("");
-  global.AbortController = AbortController;
 
   const handleSubmit = async () => {
-    const controller = new AbortController();
-    const { signal } = controller;
     setLoading(true);
+    // Instructions modifier based on tone
+    let toneInstruction = "";
+
+    if (tone === "Casual") {
+      toneInstruction = "Write the cover letter in a casual style.";
+    } else if (tone === "Friendly") {
+      toneInstruction = "Write the cover letter in a friendly manner.";
+    } else {
+      toneInstruction = "Write the cover letter in a professional manner.";
+    }
+
+    // Adjusting length
+    let lengthInstruction = "";
+    if (length === "Short") {
+      lengthInstruction = "Keep it concise.";
+    } else if (length === "Long") {
+      lengthInstruction = "Elaborate more on each point.";
+    }
+
+    // Base instruction
+    let instruction = `
+Generate a cover letter for:
+Name: ${applicantName}
+Phone: ${applicantPhoneNumber}
+Email: ${applicantEmail}
+
+Addressing to:
+Company: ${companyName}
+Position: ${jobTitle}
+
+Details:
+Skills: ${skills
+      .split(",")
+      .map((skill) => skill.trim())
+      .join(", ")}
+Experience: ${relevantExperience}
+Job description they are applying for: ${jobDescription}. Adjust the cover letter to this description accordingly.
+
+Format: Start with the applicant's name, phone number, and email at the top. Address the letter to the company and position. Include skills, experience, interest in the role, and company. Come up with ideas on why you are interested in ${companyName} and in the ${jobTitle}.
+
+${toneInstruction} ${lengthInstruction}
+`;
+
+    if (language === "French") {
+      instruction = `
+Générez une lettre de motivation pour :
+Nom : ${applicantName}
+Téléphone : ${applicantPhoneNumber}
+E-mail : ${applicantEmail}
+
+Adresse à :
+Entreprise : ${companyName}
+Poste : ${jobTitle}
+
+Détails :
+Compétences : ${skills
+        .split(",")
+        .map((skill) => skill.trim())
+        .join(", ")}
+Expérience : ${relevantExperience}
+Description du poste pour lequel ils postulent : ${jobDescription}. Adaptez la lettre de motivation à cette description en conséquence.
+
+Format : Commencez par le nom du candidat, son numéro de téléphone et son e-mail en haut de la page. Adressez la lettre à l'entreprise et au poste en question. Incluez les compétences, l'expérience, l'intérêt pour le poste et pour l'entreprise. Venez avec des idées sur les raisons pour lesquelles vous êtes intéressé par ${companyName} et par ${jobTitle}.
+
+${toneInstruction} ${lengthInstruction}
+`;
+    }
+
     try {
       const response = await fetch(
-        ("https://jobsearchwithchatgpt.onrender.com/generateCoverLetter",
-        { signal }),
+        "https://api.openai.com/v1/chat/completions",
         {
           method: "POST",
           headers: {
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            applicantName,
-            applicantPhoneNumber,
-            applicantEmail,
-            jobTitle,
-            companyName,
-            skills: skills.split(",").map((skill) => skill.trim()),
-            relevantExperience,
-            jobDescription,
-            language,
-            tone,
-            length,
+            model: "gpt-3.5-turbo",
+            messages: [
+              {
+                role: "system",
+                content: "You are a helpful assistant.",
+              },
+              {
+                role: "user",
+                content: instruction,
+              },
+            ],
           }),
         }
       );
 
+      if (!response.ok) {
+        const responseData = await response.json();
+        console.error("OpenAI API Error:", responseData);
+        throw new Error(`OpenAI API responded with status: ${response.status}`);
+      }
+
       const data = await response.json();
-      setCoverLetter(`${language}: ${data.coverLetter}`);
+      const coverLetter = data.choices[0].message.content.trim();
+      setCoverLetter(`${language}: ${coverLetter}`);
     } catch (error) {
       console.error(error);
     } finally {
@@ -216,7 +288,7 @@ function App() {
           </div>
           <div>
             <Label>Your skills (comma-separated):</Label>
-            <InputField
+            <TextareaField
               type="text"
               value={skills}
               onChange={(e) => setSkills(e.target.value)}
