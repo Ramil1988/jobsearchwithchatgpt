@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import {
   Document,
@@ -9,6 +9,9 @@ import {
   AlignmentType,
 } from "docx";
 import { OPENAI_API_KEY } from "./config.local";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 function App() {
   const [applicantName, setApplicantName] = useState("");
@@ -31,20 +34,45 @@ function App() {
     // Instructions modifier based on tone
     let toneInstruction = "";
 
-    if (tone === "Casual") {
-      toneInstruction = "Write the cover letter in a casual style.";
-    } else if (tone === "Friendly") {
-      toneInstruction = "Write the cover letter in a friendly manner.";
-    } else {
-      toneInstruction = "Write the cover letter in a professional manner.";
+    if (language === "English") {
+      if (tone === "Casual") {
+        toneInstruction = "Write the cover letter in a casual style.";
+      } else if (tone === "Friendly") {
+        toneInstruction = "Write the cover letter in a friendly manner.";
+      } else {
+        toneInstruction = "Write the cover letter in a professional manner.";
+      }
+    } else if (language === "French") {
+      if (tone === "Casual") {
+        toneInstruction =
+          "Rédigez la lettre de motivation dans un style informel.";
+      } else if (tone === "Friendly") {
+        toneInstruction =
+          "Rédigez la lettre de motivation d'une manière amicale.";
+      } else {
+        toneInstruction =
+          "Rédigez la lettre de motivation d'une manière professionnelle.";
+      }
     }
 
-    // Adjusting length
     let lengthInstruction = "";
-    if (length === "Short") {
-      lengthInstruction = "Keep it concise.";
-    } else if (length === "Long") {
-      lengthInstruction = "Elaborate more on each point.";
+
+    if (language === "English") {
+      if (length === "Short") {
+        lengthInstruction =
+          "It's crucial to keep the cover letter concise and to the point. Avoid unnecessary details.";
+      } else if (length === "Long") {
+        lengthInstruction =
+          "It's essential to provide an extensive cover letter. Expound on every aspect mentioned and give detailed explanations.";
+      }
+    } else if (language === "French") {
+      if (length === "Short") {
+        lengthInstruction =
+          "Il est crucial de garder la lettre de motivation concise et précise. Évitez les détails inutiles.";
+      } else if (length === "Long") {
+        lengthInstruction =
+          "Il est essentiel de fournir une lettre de motivation détaillée. Élaborez sur chaque aspect mentionné et donnez des explications détaillées.";
+      }
     }
 
     // Base instruction
@@ -64,9 +92,9 @@ Skills: ${skills
       .map((skill) => skill.trim())
       .join(", ")}
 Experience: ${relevantExperience}
-Job description they are applying for: ${jobDescription}. Adjust the cover letter to this description accordingly.
+Job description they are applying for: ${jobDescription}. 
 
-Format: Start with the applicant's name, phone number, and email at the top. Address the letter to the company and position. Include skills, experience, interest in the role, and company. Come up with ideas on why you are interested in ${companyName} and in the ${jobTitle}.
+Format: Start with the applicant's name, phone number, and email at the top. Address the letter to the company and position. Include skills, experience, interest in the role, and company. Come up with ideas on why you are interested in ${companyName} and in the ${jobTitle}. Adjust the cover letter to this description accordingly.
 
 ${toneInstruction} ${lengthInstruction}
 `;
@@ -129,7 +157,7 @@ ${toneInstruction} ${lengthInstruction}
 
       const data = await response.json();
       const coverLetter = data.choices[0].message.content.trim();
-      setCoverLetter(`${language}: ${coverLetter}`);
+      setCoverLetter(coverLetter);
     } catch (error) {
       console.error(error);
     } finally {
@@ -220,9 +248,37 @@ ${toneInstruction} ${lengthInstruction}
     });
   };
 
+  const generatePdf = () => {
+    const cleanedCoverLetter = coverLetter.replace(
+      /^(English: |French: )/g,
+      ""
+    );
+
+    const docDefinition = {
+      content: [{ text: "Cover Letter", style: "header" }, cleanedCoverLetter],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10],
+          alignment: "center",
+        },
+        name: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 0, 0, 5],
+        },
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).download("cover_letter.pdf");
+  };
+
   return (
     <AppContainer>
-      <h1>Welcome to the Job assistance program!</h1>
+      <ContainerForSloganText>
+        <SloganText>Welcome to the Job assistance program!</SloganText>
+      </ContainerForSloganText>
       <h2>Create your cover letter</h2>
 
       <ContentContainer>
@@ -347,19 +403,7 @@ ${toneInstruction} ${lengthInstruction}
             {copySuccess && (
               <CopySuccessMessage>{copySuccess}</CopySuccessMessage>
             )}
-            <CopyButton
-              onClick={() =>
-                generateDocx(
-                  applicantName,
-                  applicantPhoneNumber,
-                  applicantEmail,
-                  companyName,
-                  coverLetter
-                )
-              }
-            >
-              Download as DOCX
-            </CopyButton>
+            <CopyButton onClick={generatePdf}>Download as PDF</CopyButton>
           </CoverLetterContainer>
         ) : null}
       </ContentContainer>
@@ -397,12 +441,55 @@ const Spinner = styled.div`
   border-top-color: #3498db;
 `;
 
+const ContainerForSloganText = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to bottom, #f5f7fa, #e0e5ec);
+  background-color: #fff;
+`;
+
+const typing = keyframes`
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+`;
+const blinkCursor = keyframes`
+  from, to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #204c84;
+  }
+`;
+
+const SloganText = styled.h1`
+  color: black;
+  margin: 2rem;
+  font-family: "Aeroport", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  overflow: hidden;
+  white-space: nowrap;
+  animation: ${typing} 3s steps(60, end), ${blinkCursor} 0.5s step-end infinite;
+  animation-fill-mode: forwards;
+  display: block;
+
+  @media (max-width: 1300px) {
+    display: none;
+  }
+`;
+
 const AppContainer = styled.div`
   text-align: center;
-  padding-top: 50px;
+
   max-width: 95vw;
   margin: 0 auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(to bottom, #f5f7fa, #e0e5ec);
   background-color: #fff;
   border-radius: 8px;
   padding-bottom: 50px;
@@ -469,6 +556,12 @@ const DropdownSelect = styled.select`
   font-size: 16px;
   appearance: none;
   background-color: #ffffff;
+  transition: border-color 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.2);
+  }
 
   @media (max-width: 768px) {
     width: 60%;
