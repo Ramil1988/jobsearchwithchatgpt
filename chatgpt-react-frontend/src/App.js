@@ -396,7 +396,7 @@ ${toneInstruction} ${lengthInstruction}
         ) : coverLetter ? (
           <CoverLetterContainer>
             <h3>Your Cover Letter:</h3>
-            <div dangerouslySetInnerHTML={{ __html: coverLetter }} />
+            <PreformattedTextContainer dangerouslySetInnerHTML={{ __html: coverLetter }} />
             <CopyButton onClick={handleCopyText}>
               Copy your Cover letter
             </CopyButton>
@@ -670,6 +670,11 @@ const CopySuccessMessage = styled.span`
   margin-left: 10px;
   color: #27ae60;
   font-weight: bold;
+`;
+
+const PreformattedTextContainer = styled.pre`
+  white-space: pre-wrap;
+  word-wrap: break-word;
 `;
 
 export default App;
