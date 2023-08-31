@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import {
   Document,
@@ -249,13 +249,15 @@ ${toneInstruction} ${lengthInstruction}
   };
 
   const generatePdf = () => {
-    const cleanedCoverLetter = coverLetter.replace(
-      /^(English: |French: )/g,
-      ""
-    );
+    const editedCoverLetter = document.querySelector(
+      "[contentEditable=true]"
+    ).innerText;
 
     const docDefinition = {
-      content: [{ text: "Cover Letter", style: "header" }, cleanedCoverLetter],
+      content: [
+        { text: "Edited Cover Letter", style: "header" },
+        editedCoverLetter,
+      ],
       styles: {
         header: {
           fontSize: 18,
@@ -271,7 +273,7 @@ ${toneInstruction} ${lengthInstruction}
       },
     };
 
-    pdfMake.createPdf(docDefinition).download("cover_letter.pdf");
+    pdfMake.createPdf(docDefinition).download("edited_cover_letter.pdf");
   };
 
   return (
@@ -395,8 +397,11 @@ ${toneInstruction} ${lengthInstruction}
           </LoadingContainer>
         ) : coverLetter ? (
           <CoverLetterContainer>
-            <h3>Your Cover Letter:</h3>
-            <PreformattedTextContainer dangerouslySetInnerHTML={{ __html: coverLetter }} />
+            <h3>Cover Letter</h3>
+            <PreformattedTextContainer
+              contentEditable={true}
+              dangerouslySetInnerHTML={{ __html: coverLetter }}
+            />
             <CopyButton onClick={handleCopyText}>
               Copy your Cover letter
             </CopyButton>
@@ -577,6 +582,8 @@ const CoverLetterContainer = styled.div`
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  resize: both; // This line allows the container to be resized both vertically and horizontally
+  overflow: hidden; // This makes sure the content does not overflow the box
 
   @media (max-width: 768px) {
     width: 80vw;
@@ -638,7 +645,7 @@ const Label = styled.label`
 `;
 
 const SendButton = styled.button`
-  width: 107%;
+  width: 106%;
   cursor: pointer;
   background: linear-gradient(90deg, #3498db, #8e44ad);
   color: #ffffff;
@@ -675,6 +682,7 @@ const CopySuccessMessage = styled.span`
 const PreformattedTextContainer = styled.pre`
   white-space: pre-wrap;
   word-wrap: break-word;
+  font-size: 15px;
 `;
 
 export default App;
