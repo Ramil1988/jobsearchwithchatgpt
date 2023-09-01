@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FaArrowUp } from "react-icons/fa";
 import CoverLetter from "./CoverLetter";
+import Resume from "./Resume";
 
 const App = () => {
   const ScrollToTop = () => {
@@ -44,17 +45,13 @@ return(
         <Route
           path="/"
           element={
-            <CoverLetter  />
+            <Resume  />
           }
         />
   </Routes>
-
   </>
   )
-
 }
-
-
 
 const ScrollButton = styled.button`
   position: fixed;
