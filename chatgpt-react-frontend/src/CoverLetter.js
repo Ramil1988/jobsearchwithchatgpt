@@ -86,7 +86,7 @@ Skills: ${skills
 Experience: ${relevantExperience}
 Job description they are applying for: ${jobDescription}. 
 
-Format: Start with the applicant's name, phone number, and email at the top. Address the letter to the company and position. Include skills, experience, interest in the role, and company. Come up with ideas on why you are interested in ${companyName} and in the ${jobTitle}. Adjust the cover letter to this description accordingly.
+Format: Start with the applicant's name, phone number, and email at the top. Address the letter to the company and position. Include skills, experience, interest in the role, and company. Come up with ideas on why you are interested in ${companyName} and in the ${jobTitle}. Do not include Date. Adjust the cover letter to this description accordingly.
 
 ${toneInstruction} ${lengthInstruction}
 `;
@@ -198,14 +198,13 @@ ${toneInstruction} ${lengthInstruction}
     <>
       <AppContainer>
         <ContainerForSloganText>
-          <SloganText>Create your cover letter with AI</SloganText>
+          <SloganText>CREATE YOUR COVER LETTER WITH AI</SloganText>
         </ContainerForSloganText>
         <ContentContainer>
           <FormContainer>
-            <h3>Configuration:</h3>
             <ConfigurationContainer>
               <div>
-                <Label>Language for Cover letter:</Label>
+                <Label>LANGUAGE FOR COVER LETTER:</Label>
                 <DropdownSelect
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
@@ -215,7 +214,7 @@ ${toneInstruction} ${lengthInstruction}
                 </DropdownSelect>
               </div>
               <div>
-                <Label>Tone:</Label>
+                <Label>TONE:</Label>
                 <DropdownSelect
                   value={tone}
                   onChange={(e) => setTone(e.target.value)}
@@ -226,7 +225,7 @@ ${toneInstruction} ${lengthInstruction}
                 </DropdownSelect>
               </div>
               <div>
-                <Label>Length:</Label>
+                <Label>LENGTH:</Label>
                 <DropdownSelect
                   value={length}
                   onChange={(e) => setLength(e.target.value)}
@@ -240,9 +239,9 @@ ${toneInstruction} ${lengthInstruction}
               <DoubleSectionContainer>
                 <InsideSection>
                   {" "}
-                  <h3>Information about you:</h3>
+                  <h3>INFORMATION ABOUT YOU:</h3>
                   <div>
-                    <Label>Your Name:</Label>
+                    <Label>YOUR NAME:</Label>
                     <InputField
                       type="text"
                       value={applicantName}
@@ -250,7 +249,7 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>Your Phone number:</Label>
+                    <Label>YOUR PHONE NUMBER:</Label>
                     <InputField
                       type="text"
                       value={applicantPhoneNumber}
@@ -258,7 +257,7 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>Your email:</Label>
+                    <Label>YOUR EMAIL:</Label>
                     <InputField
                       type="text"
                       value={applicantEmail}
@@ -266,7 +265,7 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>Your skills (comma-separated):</Label>
+                    <Label>YOUR SKILLS (comma-separated):</Label>
                     <TextareaField
                       type="text"
                       value={skills}
@@ -275,7 +274,7 @@ ${toneInstruction} ${lengthInstruction}
                   </div>
                   <div>
                     <Label>
-                      Your Experience (Job, period, duties. Grab from CV):
+                      YOUR EXPERIENCE (job, period, duties. Grab from CV):
                     </Label>
                     <TextareaField
                       value={relevantExperience}
@@ -284,9 +283,9 @@ ${toneInstruction} ${lengthInstruction}
                   </div>
                 </InsideSection>
                 <InsideSection>
-                  <h3>Information about vacancy:</h3>
+                  <h3>INFORMATION ABOUT VACANCY:</h3>
                   <div>
-                    <Label>Job Title:</Label>
+                    <Label>JOB TITLE:</Label>
                     <InputField
                       type="text"
                       value={jobTitle}
@@ -294,7 +293,7 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>Company Name:</Label>
+                    <Label>COMPPANY NAME:</Label>
                     <InputField
                       type="text"
                       value={companyName}
@@ -302,8 +301,8 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>Job Description:</Label>
-                    <TextareaField
+                    <Label>JOB DESCRIPTION:</Label>
+                    <TextareaFieldSecond
                       value={jobDescription}
                       onChange={(e) => setJobDescription(e.target.value)}
                     />
@@ -312,7 +311,7 @@ ${toneInstruction} ${lengthInstruction}
               </DoubleSectionContainer>
             </FilloutSection>
             <SendButton onClick={handleSubmit}>
-              <h2>Generate Cover Letter</h2>
+              <h2>GENERATE YOUR COVER LETTER</h2>
             </SendButton>
           </FormContainer>
         </ContentContainer>
@@ -344,18 +343,20 @@ ${toneInstruction} ${lengthInstruction}
   );
 }
 
+
+
 const LoadingContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 45%;
-  gap: 20px;
+  gap: 10px;
 `;
 
 const LoadingMessage = styled.p`
-  font-size: 16px;
+  font-size: 30px;
   font-weight: bold;
-  color: #3498db;
+  color: white;
 `;
 
 const spin = keyframes`
@@ -379,8 +380,6 @@ const ContainerForSloganText = styled.div`
   width: 90vw;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(to bottom, #f5f7fa, #e0e5ec);
-  background-color: #fff;
 `;
 
 const typing = keyframes`
@@ -401,8 +400,8 @@ const blinkCursor = keyframes`
 `;
 
 const SloganText = styled.h1`
-  color: black;
-  margin: 2rem;
+  color: white;
+  margin-bottom: 4rem;
   font-family: "Aeroport", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
@@ -424,16 +423,10 @@ const AppContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  background: linear-gradient(to bottom, #f5f7fa, #e0e5ec);
-  background-color: #fff;
+  background:rgb(59 110 246 / 0.5);
+  
   border-radius: 8px;
   padding-bottom: 50px;
-
-  @media (max-width: 768px) {
-    max-width: 100vw;
-    padding: 20px;
-  }
 `;
 
 const ContentContainer = styled.div`
@@ -441,7 +434,6 @@ const ContentContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   justify-content: center;
-
   padding: 0 50px;
 
   @media (max-width: 768px) {
@@ -453,7 +445,7 @@ const ContentContainer = styled.div`
 const ConfigurationContainer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 30%;
+  width: 40%;
 
   & > div {
     flex: 1;
@@ -461,9 +453,20 @@ const ConfigurationContainer = styled.div`
     justify-content: space-between;
   }
 
+  @media (max-width: 1300px) {
+    margin: 20px;
+    width: 60%;
+    
+  }
+
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 20px;
+    width: 80%;
+    & > div {
+      width: 100%;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
   }
 `;
 
@@ -473,6 +476,11 @@ const FormContainer = styled.div`
   align-items: center;
   gap: 15px;
 
+
+  & > h1, & > h2, & > h3 {
+    color: white;
+  }
+
   & > div {
     display: flex;
     flex-direction: column;
@@ -480,8 +488,11 @@ const FormContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    width: 100%;
-  }
+    width: 95%;
+    margin-top: 20px;
+    & > h1, & > h2, & > h3 {
+      font-size: 18px;
+    }}
 `;
 
 const FilloutSection = styled.div`
@@ -493,8 +504,11 @@ const DoubleSectionContainer = styled.div`
   width: 90vw;
   display: flex;
   flex-direction: row;
+
+
   @media (max-width: 768px) {
     flex-direction: column;
+    width: 85vw;
   }
 `;
 
@@ -508,10 +522,15 @@ const InsideSection = styled.div`
   box-sizing: border-box;
   padding: 20px 40px;
   border: 1px solid #e5e5e5;
+  border-radius: 10px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
 
   & > div {
     margin-bottom: 15px;
+  }
+
+  & > h1, & > h2, & > h3 {
+    color: white;
   }
 
   &:last-child {
@@ -522,6 +541,17 @@ const InsideSection = styled.div`
     font-size: 24px;
     margin-bottom: 20px;
   }
+
+  &:hover {
+    border-color: #b3b3b3;
+    transform: scale(1.01);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px 20px;
+  }
 `;
 
 const DropdownSelect = styled.select`
@@ -529,7 +559,7 @@ const DropdownSelect = styled.select`
   width: 30%;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 15px;
   appearance: none;
   background-color: #ffffff;
   transition: border-color 0.3s, box-shadow 0.3s;
@@ -540,7 +570,8 @@ const DropdownSelect = styled.select`
   }
 
   @media (max-width: 768px) {
-    width: 60%;
+    width: 50%;
+    
   }
 `;
 
@@ -584,6 +615,10 @@ const InputField = styled.input`
   &:hover {
     border-color: #b3b3b3;
   }
+
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 `;
 
 const TextareaField = styled.textarea`
@@ -610,18 +645,28 @@ const TextareaField = styled.textarea`
   &:hover {
     border-color: #b3b3b3;
   }
+
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 `;
+
+const TextareaFieldSecond = styled(TextareaField)`
+height: 300px;
+`
 
 const Label = styled.label`
   text-align: left;
+  color: white;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 20px;
   display: block;
   margin-bottom: 10px;
 `;
 
 const SendButton = styled.button`
   width: 30%;
+  margin: 20px;
   cursor: pointer;
   background: linear-gradient(90deg, #3498db, #8e44ad);
   color: #ffffff;
@@ -631,6 +676,11 @@ const SendButton = styled.button`
 
   &:hover {
     background: linear-gradient(90deg, #8e44ad, #3498db);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 1px 0;
   }
 `;
 
