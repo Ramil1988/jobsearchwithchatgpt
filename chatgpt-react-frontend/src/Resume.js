@@ -11,14 +11,14 @@ import {
 import { OPENAI_API_KEY } from "./config.local";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import nlp from "compromise"
+import nlp from "compromise";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const extractSkillsNLP = (text) => {
-    const doc = nlp(text);
-    const nouns = doc.nouns().out('array');
-    return nouns;
-  };
+  const doc = nlp(text);
+  const nouns = doc.nouns().out("array");
+  return nouns;
+};
 
 function Resume() {
   const [currentResume, setCurrentResume] = useState("");
@@ -27,26 +27,25 @@ function Resume() {
   const [language, setLanguage] = useState("English");
   const [loading, setLoading] = useState(false);
   const [copySuccess, setCopySuccess] = useState("");
-  
 
   const handleSubmit = async () => {
     setLoading(true);
-    
+
     let lengthInstruction = "";
-  
+
     const jobSkills = extractSkillsNLP(jobDescription);
-  
-    if (language === 'English') {
-                 lengthInstruction = `Analyze the job description in detail: ${jobDescription}. Provide comprehensive suggestions to change my current resume, which is: ${currentResume}, to align it more closely with the ${jobDescription}. Focus on these skills: ${jobSkills.join(', ')}.`;
-       
+
+    if (language === "English") {
+      lengthInstruction = `Analyze the job description in detail: ${jobDescription}. Provide comprehensive suggestions to change my current resume, which is: ${currentResume}, to align it more closely with the ${jobDescription}. Focus on these skills: ${jobSkills.join(
+        ", "
+      )}.`;
     } else if (language === "French") {
       // ... (Your existing code for French)
     }
 
-  
     // Base instruction
     const instruction = `${lengthInstruction}`;
-  
+
     try {
       const response = await fetch(
         "https://api.openai.com/v1/chat/completions",
@@ -71,13 +70,13 @@ function Resume() {
           }),
         }
       );
-  
+
       if (!response.ok) {
         const responseData = await response.json();
         console.error("OpenAI API Error:", responseData);
         throw new Error(`OpenAI API responded with status: ${response.status}`);
       }
-  
+
       const data = await response.json();
       const adjustedResume = data.choices[0].message.content.trim();
       setAdjustedResume(adjustedResume);
@@ -128,9 +127,7 @@ function Resume() {
   };
 
   const generatePdf = () => {
-    const Resume = document.querySelector(
-      "[contentEditable=true]"
-    ).innerText;
+    const Resume = document.querySelector("[contentEditable=true]").innerText;
 
     const docDefinition = {
       content: [{ text: "Cover Letter", style: "header" }, Resume],

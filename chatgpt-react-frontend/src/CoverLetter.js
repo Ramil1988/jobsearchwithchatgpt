@@ -1,13 +1,5 @@
 import { useState } from "react";
 import styled, { keyframes } from "styled-components";
-import {
-  Document,
-  Packer,
-  Paragraph,
-  TextRun,
-  HeadingLevel,
-  AlignmentType,
-} from "docx";
 import { OPENAI_API_KEY } from "./config.local";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -177,87 +169,13 @@ ${toneInstruction} ${lengthInstruction}
       );
   };
 
-  const convertHtmlToDocxParagraphs = (htmlString) => {
-    const div = document.createElement("div");
-    div.innerHTML = htmlString;
-
-    const parseNode = (node) => {
-      if (node.nodeType === 3) {
-        return new TextRun(node.nodeValue);
-      }
-
-      if (node.nodeType === 1) {
-        const children = Array.from(node.childNodes).map(parseNode);
-        switch (node.tagName.toLowerCase()) {
-          case "b":
-            return new TextRun({ children, bold: true });
-          case "i":
-            return new TextRun({ children, italic: true });
-          default:
-            return new TextRun({ children });
-        }
-      }
-
-      return null;
-    };
-
-    return Array.from(div.childNodes).map(parseNode);
-  };
-
-  const generateDocx = () => {
-    const coverLetterParagraphs = convertHtmlToDocxParagraphs(coverLetter);
-
-    const doc = new Document({
-      sections: [
-        {
-          properties: {},
-          children: [
-            new Paragraph({
-              text: "Cover Letter",
-              heading: HeadingLevel.HEADING_1,
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `${applicantName}`,
-                  bold: true,
-                }),
-                new TextRun(`\n${applicantPhoneNumber}`),
-                new TextRun(`\n${applicantEmail}`),
-              ],
-            }),
-            new Paragraph({
-              text: `\nDear Hiring Manager at ${companyName},`,
-              bold: true,
-            }),
-            ...coverLetterParagraphs,
-          ],
-        },
-      ],
-    });
-
-    Packer.toBlob(doc).then((blob) => {
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = "cover_letter.docx";
-      anchor.click();
-
-      URL.revokeObjectURL(url);
-    });
-  };
-
   const generatePdf = () => {
     const CoverLetter = document.querySelector(
       "[contentEditable=true]"
     ).innerText;
 
     const docDefinition = {
-      content: [
-        { text: "Cover Letter", style: "header" },
-        CoverLetter,
-      ],
+      content: [{ text: "Cover Letter", style: "header" }, CoverLetter],
       styles: {
         header: {
           fontSize: 18,
@@ -277,117 +195,127 @@ ${toneInstruction} ${lengthInstruction}
   };
 
   return (
-    <AppContainer>
-      <ContainerForSloganText>
-        <SloganText>Welcome to the Job assistance program!</SloganText>
-      </ContainerForSloganText>
-      <h2>Create your cover letter</h2>
-
-      <ContentContainer>
-        <FormContainer>
-          <h3>Configuration:</h3>
-          <ConfigurationContainer>
-            <div>
-              <Label>Language for Cover letter:</Label>
-              <DropdownSelect
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-              >
-                <option value="English">English</option>
-                <option value="French">French</option>
-              </DropdownSelect>
-            </div>
-            <div>
-              <Label>Tone:</Label>
-              <DropdownSelect
-                value={tone}
-                onChange={(e) => setTone(e.target.value)}
-              >
-                <option value="Professional">Professional</option>
-                <option value="Friendly">Friendly</option>
-                <option value="Casual">Casual</option>
-              </DropdownSelect>
-            </div>
-            <div>
-              <Label>Length:</Label>
-              <DropdownSelect
-                value={length}
-                onChange={(e) => setLength(e.target.value)}
-              >
-                <option value="Short">Short</option>
-                <option value="Long">Long</option>
-              </DropdownSelect>
-            </div>
-          </ConfigurationContainer>
-          <h3>Information about you:</h3>
-          <div>
-            <Label>Your Name:</Label>
-            <InputField
-              type="text"
-              value={applicantName}
-              onChange={(e) => setApplicantName(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Your Phone number:</Label>
-            <InputField
-              type="text"
-              value={applicantPhoneNumber}
-              onChange={(e) => setApplicantPhoneNumber(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Your email:</Label>
-            <InputField
-              type="text"
-              value={applicantEmail}
-              onChange={(e) => setApplicantEmail(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Your skills (comma-separated):</Label>
-            <TextareaField
-              type="text"
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Your Experience (Job, period, duties. Grab from CV):</Label>
-            <TextareaField
-              value={relevantExperience}
-              onChange={(e) => setRelevantExperience(e.target.value)}
-            />
-          </div>
-          <h3>Information about vacancy:</h3>
-          <div>
-            <Label>Job Title:</Label>
-            <InputField
-              type="text"
-              value={jobTitle}
-              onChange={(e) => setJobTitle(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Company Name:</Label>
-            <InputField
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Job Description:</Label>
-            <TextareaField
-              value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
-            />
-          </div>
-          <SendButton onClick={handleSubmit}>
-            <h2>Generate Cover Letter</h2>
-          </SendButton>
-        </FormContainer>
-
+    <>
+      <AppContainer>
+        <ContainerForSloganText>
+          <SloganText>Create your cover letter with AI</SloganText>
+        </ContainerForSloganText>
+        <ContentContainer>
+          <FormContainer>
+            <h3>Configuration:</h3>
+            <ConfigurationContainer>
+              <div>
+                <Label>Language for Cover letter:</Label>
+                <DropdownSelect
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                >
+                  <option value="English">English</option>
+                  <option value="French">French</option>
+                </DropdownSelect>
+              </div>
+              <div>
+                <Label>Tone:</Label>
+                <DropdownSelect
+                  value={tone}
+                  onChange={(e) => setTone(e.target.value)}
+                >
+                  <option value="Professional">Professional</option>
+                  <option value="Friendly">Friendly</option>
+                  <option value="Casual">Casual</option>
+                </DropdownSelect>
+              </div>
+              <div>
+                <Label>Length:</Label>
+                <DropdownSelect
+                  value={length}
+                  onChange={(e) => setLength(e.target.value)}
+                >
+                  <option value="Short">Short</option>
+                  <option value="Long">Long</option>
+                </DropdownSelect>
+              </div>
+            </ConfigurationContainer>
+            <FilloutSection>
+              <DoubleSectionContainer>
+                <InsideSection>
+                  {" "}
+                  <h3>Information about you:</h3>
+                  <div>
+                    <Label>Your Name:</Label>
+                    <InputField
+                      type="text"
+                      value={applicantName}
+                      onChange={(e) => setApplicantName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Your Phone number:</Label>
+                    <InputField
+                      type="text"
+                      value={applicantPhoneNumber}
+                      onChange={(e) => setApplicantPhoneNumber(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Your email:</Label>
+                    <InputField
+                      type="text"
+                      value={applicantEmail}
+                      onChange={(e) => setApplicantEmail(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Your skills (comma-separated):</Label>
+                    <TextareaField
+                      type="text"
+                      value={skills}
+                      onChange={(e) => setSkills(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>
+                      Your Experience (Job, period, duties. Grab from CV):
+                    </Label>
+                    <TextareaField
+                      value={relevantExperience}
+                      onChange={(e) => setRelevantExperience(e.target.value)}
+                    />
+                  </div>
+                </InsideSection>
+                <InsideSection>
+                  <h3>Information about vacancy:</h3>
+                  <div>
+                    <Label>Job Title:</Label>
+                    <InputField
+                      type="text"
+                      value={jobTitle}
+                      onChange={(e) => setJobTitle(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Company Name:</Label>
+                    <InputField
+                      type="text"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Job Description:</Label>
+                    <TextareaField
+                      value={jobDescription}
+                      onChange={(e) => setJobDescription(e.target.value)}
+                    />
+                  </div>
+                </InsideSection>
+              </DoubleSectionContainer>
+            </FilloutSection>
+            <SendButton onClick={handleSubmit}>
+              <h2>Generate Cover Letter</h2>
+            </SendButton>
+          </FormContainer>
+        </ContentContainer>
         {loading ? (
           <LoadingContainer>
             <Spinner />
@@ -411,8 +339,8 @@ ${toneInstruction} ${lengthInstruction}
             <CopyButton onClick={generatePdf}>Download as PDF</CopyButton>
           </CoverLetterContainer>
         ) : null}
-      </ContentContainer>
-    </AppContainer>
+      </AppContainer>
+    </>
   );
 }
 
@@ -448,6 +376,7 @@ const Spinner = styled.div`
 
 const ContainerForSloganText = styled.div`
   display: flex;
+  width: 90vw;
   justify-content: center;
   align-items: center;
   background: linear-gradient(to bottom, #f5f7fa, #e0e5ec);
@@ -490,8 +419,10 @@ const SloganText = styled.h1`
 
 const AppContainer = styled.div`
   text-align: center;
-
-  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin: 0 auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   background: linear-gradient(to bottom, #f5f7fa, #e0e5ec);
@@ -509,7 +440,8 @@ const ContentContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
+  justify-content: center;
+
   padding: 0 50px;
 
   @media (max-width: 768px) {
@@ -521,8 +453,7 @@ const ContentContainer = styled.div`
 const ConfigurationContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  gap: 60px;
+  width: 30%;
 
   & > div {
     flex: 1;
@@ -539,8 +470,8 @@ const ConfigurationContainer = styled.div`
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 15px;
-  width: 45%;
 
   & > div {
     display: flex;
@@ -553,11 +484,51 @@ const FormContainer = styled.div`
   }
 `;
 
+const FilloutSection = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const DoubleSectionContainer = styled.div`
+  width: 90vw;
+  display: flex;
+  flex-direction: row;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+const InsideSection = styled.div`
+  flex: 1;
+  width: 45%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+  box-sizing: border-box;
+  padding: 20px 40px;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+
+  & > div {
+    margin-bottom: 15px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+`;
+
 const DropdownSelect = styled.select`
   padding: 10px 15px;
   width: 30%;
   border: 2px solid #e0e0e0;
-  border-radius: 4px;
+  border-radius: 10px;
   font-size: 16px;
   appearance: none;
   background-color: #ffffff;
@@ -574,7 +545,8 @@ const DropdownSelect = styled.select`
 `;
 
 const CoverLetterContainer = styled.div`
-  width: 45%;
+  width: 50%;
+  margin: 20px;
   border: 1px solid #ccc;
   padding: 20px;
   height: fit-content;
@@ -582,8 +554,8 @@ const CoverLetterContainer = styled.div`
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  resize: both; // This line allows the container to be resized both vertically and horizontally
-  overflow: hidden; // This makes sure the content does not overflow the box
+  resize: both;
+  overflow: hidden;
 
   @media (max-width: 768px) {
     width: 80vw;
@@ -593,9 +565,9 @@ const CoverLetterContainer = styled.div`
 
 const InputField = styled.input`
   padding: 10px 15px;
-  width: 100%;
+  width: 95%;
   border: 2px solid #e0e0e0;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
@@ -616,9 +588,10 @@ const InputField = styled.input`
 
 const TextareaField = styled.textarea`
   padding: 10px 15px;
-  width: 100%;
+  width: 95%;
+
   border: 2px solid #e0e0e0;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 16px;
   height: 100px;
   resize: vertical;
@@ -642,10 +615,13 @@ const TextareaField = styled.textarea`
 const Label = styled.label`
   text-align: left;
   font-weight: bold;
+  font-size: 18px;
+  display: block;
+  margin-bottom: 10px;
 `;
 
 const SendButton = styled.button`
-  width: 106%;
+  width: 30%;
   cursor: pointer;
   background: linear-gradient(90deg, #3498db, #8e44ad);
   color: #ffffff;
@@ -662,14 +638,14 @@ const CopyButton = styled.button`
   margin: 20px;
   padding: 10px;
   cursor: pointer;
-  background-color: #3498db;
+  background: linear-gradient(90deg, #3498db, #8e44ad);
   color: #ffffff;
   border: none;
   border-radius: 4px;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #2980b9;
+    background: linear-gradient(90deg, #8e44ad, #3498db);
   }
 `;
 
@@ -680,9 +656,14 @@ const CopySuccessMessage = styled.span`
 `;
 
 const PreformattedTextContainer = styled.pre`
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
   white-space: pre-wrap;
-  word-wrap: break-word;
-  font-size: 15px;
+  overflow: hidden;
+  border: 1px solid #dcdcdc;
 `;
 
 export default CoverLetter;

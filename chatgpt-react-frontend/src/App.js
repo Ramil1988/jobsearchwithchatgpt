@@ -32,26 +32,18 @@ const App = () => {
       <ScrollButton onClick={scrollToTop} show={isVisible}>
         <FaArrowUp />
       </ScrollButton>
-      );
-  }
+    );
+  };
 
-
-
-
-return(
-  <>
-  <ScrollToTop />
-  <Routes>
-        <Route
-          path="/"
-          element={
-            <Resume  />
-          }
-        />
-  </Routes>
-  </>
-  )
-}
+  return (
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<CoverLetter />} />
+      </Routes>
+    </>
+  );
+};
 
 const ScrollButton = styled.button`
   position: fixed;
