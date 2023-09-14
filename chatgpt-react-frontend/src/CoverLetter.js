@@ -3,6 +3,8 @@ import styled, { keyframes } from "styled-components";
 import { OPENAI_API_KEY } from "./config.local";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import monctoncares from "./monctoncares.png"
+
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 function CoverLetter() {
@@ -197,7 +199,8 @@ ${toneInstruction} ${lengthInstruction}
   return (
     <>
       <AppContainer>
-        <ContainerForSloganText>
+      <Logo src={monctoncares} alt="Icon" />
+      <ContainerForSloganText>
           <SloganText>CREATE YOUR COVER LETTER WITH AI</SloganText>
         </ContainerForSloganText>
         <ContentContainer>
@@ -375,11 +378,21 @@ const Spinner = styled.div`
   border-top-color: #3498db;
 `;
 
+const InnerWrapper = styled.div`
+
+`;
+
+const Logo = styled.img`
+  display: block;
+  margin: 5px;
+ 
+`;
+
 const ContainerForSloganText = styled.div`
   display: flex;
-  width: 90vw;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  gap: 1rem
 `;
 
 const typing = keyframes`
@@ -420,7 +433,6 @@ const AppContainer = styled.div`
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   margin: 0 auto;
   background:#60B9FD;
