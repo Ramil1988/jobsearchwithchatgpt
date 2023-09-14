@@ -204,7 +204,7 @@ ${toneInstruction} ${lengthInstruction}
           <FormContainer>
             <ConfigurationContainer>
               <div>
-                <Label>LANGUAGE FOR COVER LETTER:</Label>
+                <Label>LANGUAGE:</Label>
                 <DropdownSelect
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
@@ -293,7 +293,7 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>COMPPANY NAME:</Label>
+                    <Label>COMPANY NAME:</Label>
                     <InputField
                       type="text"
                       value={companyName}
@@ -423,7 +423,7 @@ const AppContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  background:rgb(59 110 246 / 0.5);
+  background:#60B9FD;
   
   border-radius: 8px;
   padding-bottom: 50px;
@@ -445,28 +445,17 @@ const ContentContainer = styled.div`
 const ConfigurationContainer = styled.div`
   display: flex;
   flex-direction: row;
-  width: 40%;
 
+  
   & > div {
     flex: 1;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 
   @media (max-width: 1300px) {
     margin: 20px;
-    width: 60%;
-    
-  }
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    width: 80%;
-    & > div {
-      width: 100%;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
   }
 `;
 
@@ -474,7 +463,7 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
 
 
   & > h1, & > h2, & > h3 {
@@ -556,7 +545,8 @@ const InsideSection = styled.div`
 
 const DropdownSelect = styled.select`
   padding: 10px 15px;
-  width: 30%;
+  width: 150px;
+  margin-left: 20px;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
   font-size: 15px;
@@ -567,11 +557,6 @@ const DropdownSelect = styled.select`
   &:hover {
     border-color: #3498db;
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.2);
-  }
-
-  @media (max-width: 768px) {
-    width: 50%;
-    
   }
 `;
 
