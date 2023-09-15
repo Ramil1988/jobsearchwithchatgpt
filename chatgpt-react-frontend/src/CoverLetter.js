@@ -13,7 +13,6 @@ function CoverLetter() {
   const [applicantEmail, setApplicantEmail] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
-  const [skills, setSkills] = useState("");
   const [relevantExperience, setRelevantExperience] = useState("");
   const [coverLetter, setCoverLetter] = useState("");
   const [language, setLanguage] = useState("English");
@@ -81,10 +80,6 @@ Company: ${companyName}
 Position: ${jobTitle}
 
 Details:
-Skills: ${skills
-      .split(",")
-      .map((skill) => skill.trim())
-      .join(", ")}
 Experience: ${relevantExperience}
 Job description they are applying for: ${jobDescription}. 
 
@@ -105,10 +100,6 @@ Entreprise : ${companyName}
 Poste : ${jobTitle}
 
 Détails :
-Compétences : ${skills
-        .split(",")
-        .map((skill) => skill.trim())
-        .join(", ")}
 Expérience : ${relevantExperience}
 Description du poste pour lequel ils postulent : ${jobDescription}. Adaptez la lettre de motivation à cette description en conséquence.
 
@@ -242,9 +233,9 @@ ${toneInstruction} ${lengthInstruction}
               <DoubleSectionContainer>
                 <InsideSection>
                   {" "}
-                  <h3>INFORMATION ABOUT YOU:</h3>
+                  <h3>INFORMATION ABOUT YOU</h3>
                   <div>
-                    <Label>YOUR NAME:</Label>
+                    <Label>YOUR NAME</Label>
                     <InputField
                       type="text"
                       value={applicantName}
@@ -252,7 +243,7 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>YOUR PHONE NUMBER:</Label>
+                    <Label>YOUR PHONE NUMBER</Label>
                     <InputField
                       type="text"
                       value={applicantPhoneNumber}
@@ -260,7 +251,7 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>YOUR EMAIL:</Label>
+                    <Label>YOUR EMAIL</Label>
                     <InputField
                       type="text"
                       value={applicantEmail}
@@ -268,27 +259,19 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>YOUR SKILLS (comma-separated):</Label>
-                    <TextareaField
-                      type="text"
-                      value={skills}
-                      onChange={(e) => setSkills(e.target.value)}
-                    />
-                  </div>
-                  <div>
                     <Label>
-                      YOUR EXPERIENCE (job, period, duties. Grab from CV):
+                      YOUR RESUME (copy and paste the text over here)
                     </Label>
-                    <TextareaField
+                    <TextareaFieldSecond
                       value={relevantExperience}
                       onChange={(e) => setRelevantExperience(e.target.value)}
                     />
                   </div>
                 </InsideSection>
                 <InsideSection>
-                  <h3>INFORMATION ABOUT VACANCY:</h3>
+                  <h3>INFORMATION ABOUT VACANCY</h3>
                   <div>
-                    <Label>JOB TITLE:</Label>
+                    <Label>JOB TITLE</Label>
                     <InputField
                       type="text"
                       value={jobTitle}
@@ -296,7 +279,7 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>COMPANY NAME:</Label>
+                    <Label>COMPANY NAME</Label>
                     <InputField
                       type="text"
                       value={companyName}
@@ -304,7 +287,7 @@ ${toneInstruction} ${lengthInstruction}
                     />
                   </div>
                   <div>
-                    <Label>JOB DESCRIPTION:</Label>
+                    <Label>JOB DESCRIPTION</Label>
                     <TextareaFieldSecond
                       value={jobDescription}
                       onChange={(e) => setJobDescription(e.target.value)}
@@ -532,10 +515,6 @@ const InsideSection = styled.div`
 
   & > h1, & > h2, & > h3 {
     color: white;
-  }
-
-  &:last-child {
-    margin-bottom: 0;
   }
 
   h3 {
