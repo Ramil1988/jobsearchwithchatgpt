@@ -198,7 +198,7 @@ ${toneInstruction} ${lengthInstruction}
           <FormContainer>
             <ConfigurationContainer>
               <div>
-                <Label>LANGUAGE:</Label>
+                <Label>LANGUAGE</Label>
                 <DropdownSelect
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
@@ -208,7 +208,7 @@ ${toneInstruction} ${lengthInstruction}
                 </DropdownSelect>
               </div>
               <div>
-                <Label>TONE:</Label>
+                <Label>TONE</Label>
                 <DropdownSelect
                   value={tone}
                   onChange={(e) => setTone(e.target.value)}
@@ -219,7 +219,7 @@ ${toneInstruction} ${lengthInstruction}
                 </DropdownSelect>
               </div>
               <div>
-                <Label>LENGTH:</Label>
+                <Label>LENGTH</Label>
                 <DropdownSelect
                   value={length}
                   onChange={(e) => setLength(e.target.value)}
