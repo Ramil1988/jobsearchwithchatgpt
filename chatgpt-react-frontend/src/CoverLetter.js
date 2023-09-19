@@ -24,19 +24,22 @@ function CoverLetter() {
 
   const addUserToDatabase = async () => {
     try {
-      const response = await fetch("/user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          applicantName,
-          applicantPhoneNumber,
-          applicantEmail,
-          companyName,
-          jobTitle,
-        }),
-      });
+      const response = await fetch(
+        "https://monctonservices-com.onrender.com/user",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            applicantName,
+            applicantPhoneNumber,
+            applicantEmail,
+            companyName,
+            jobTitle,
+          }),
+        }
+      );
 
       if (response.headers.get("content-type").includes("application/json")) {
         const data = await response.json();
