@@ -16,6 +16,7 @@ express()
   .use(morgan("tiny"))
   .use(cors())
   .use(express.json())
+  
 
   .post("/user", createNewUser)
   .get("/allUsers", getAllUsers)

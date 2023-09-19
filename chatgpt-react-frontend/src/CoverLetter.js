@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { OPENAI_API_KEY } from "./config.local";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import monctoncares from "./monctoncares.png"
+import monctoncares from "./monctoncares.png";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -21,6 +21,37 @@ function CoverLetter() {
   const [tone, setTone] = useState("Professional");
   const [length, setLength] = useState("Short");
   const [jobDescription, setJobDescription] = useState("");
+
+  const addUserToDatabase = async () => {
+    try {
+      const response = await fetch("/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          applicantName,
+          applicantPhoneNumber,
+          applicantEmail,
+          companyName,
+          jobTitle,
+        }),
+      });
+
+      if (response.headers.get("content-type").includes("application/json")) {
+        const data = await response.json();
+        if (!response.ok) {
+          console.error("Error adding user:", data.message);
+          throw new Error(data.message);
+        }
+        console.log("User added successfully:", data.data);
+      } else {
+        console.error("Not a JSON response:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -108,6 +139,7 @@ Format : Commencez par le nom du candidat, son numéro de téléphone et son e-m
 ${toneInstruction} ${lengthInstruction}
 `;
     }
+    addUserToDatabase();
 
     try {
       const response = await fetch(
@@ -190,8 +222,8 @@ ${toneInstruction} ${lengthInstruction}
   return (
     <>
       <AppContainer>
-      <Logo src={monctoncares} alt="Icon" />
-      <ContainerForSloganText>
+        <Logo src={monctoncares} alt="Icon" />
+        <ContainerForSloganText>
           <SloganText>CREATE YOUR COVER LETTER WITH AI</SloganText>
         </ContainerForSloganText>
         <ContentContainer>
@@ -329,8 +361,6 @@ ${toneInstruction} ${lengthInstruction}
   );
 }
 
-
-
 const LoadingContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -361,21 +391,16 @@ const Spinner = styled.div`
   border-top-color: #3498db;
 `;
 
-const InnerWrapper = styled.div`
-
-`;
-
 const Logo = styled.img`
   display: block;
   margin: 5px;
- 
 `;
 
 const ContainerForSloganText = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem
+  gap: 1rem;
 `;
 
 const typing = keyframes`
@@ -418,8 +443,8 @@ const AppContainer = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
-  background:#60B9FD;
-  
+  background: #60b9fd;
+
   border-radius: 8px;
   padding-bottom: 50px;
 `;
@@ -441,7 +466,6 @@ const ConfigurationContainer = styled.div`
   display: flex;
   flex-direction: row;
 
-  
   & > div {
     flex: 1;
     display: flex;
@@ -460,8 +484,9 @@ const FormContainer = styled.div`
   align-items: center;
   gap: 10px;
 
-
-  & > h1, & > h2, & > h3 {
+  & > h1,
+  & > h2,
+  & > h3 {
     color: white;
   }
 
@@ -474,9 +499,12 @@ const FormContainer = styled.div`
   @media (max-width: 768px) {
     width: 95%;
     margin-top: 20px;
-    & > h1, & > h2, & > h3 {
+    & > h1,
+    & > h2,
+    & > h3 {
       font-size: 18px;
-    }}
+    }
+  }
 `;
 
 const FilloutSection = styled.div`
@@ -488,7 +516,6 @@ const DoubleSectionContainer = styled.div`
   width: 90vw;
   display: flex;
   flex-direction: row;
-
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -513,7 +540,9 @@ const InsideSection = styled.div`
     margin-bottom: 15px;
   }
 
-  & > h1, & > h2, & > h3 {
+  & > h1,
+  & > h2,
+  & > h3 {
     color: white;
   }
 
@@ -628,8 +657,8 @@ const TextareaField = styled.textarea`
 `;
 
 const TextareaFieldSecond = styled(TextareaField)`
-height: 300px;
-`
+  height: 300px;
+`;
 
 const Label = styled.label`
   text-align: left;

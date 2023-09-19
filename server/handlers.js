@@ -19,14 +19,32 @@ client.connect();
 
 const createNewUser = async (req, res) => {
   try {
-    const { applicantName, applicantPhoneNumber, applicantEmail } = req.body;
-    await client.connect();
-
-    const newUser = {
-      _id: uuidv4(),
+    const {
       applicantName,
       applicantPhoneNumber,
       applicantEmail,
+      companyName,
+      jobTitle,
+    } = req.body;
+    await client.connect();
+
+    const currentDate = new Date();
+    const formattedDate = `${String(currentDate.getDate()).padStart(
+      2,
+      "0"
+    )}.${String(currentDate.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}.${currentDate.getFullYear()}`;
+
+    const newUser = {
+      _id: uuidv4(),
+      dateCreated: formattedDate,
+      applicantName,
+      applicantPhoneNumber,
+      applicantEmail,
+      companyName,
+      jobTitle,
     };
 
     const result = await users.insertOne(newUser);
