@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { OPENAI_API_KEY } from "./config.local";
 import pdfMake from "pdfmake/build/pdfmake";
@@ -21,6 +21,37 @@ function CoverLetter() {
   const [tone, setTone] = useState("Professional");
   const [length, setLength] = useState("Short");
   const [jobDescription, setJobDescription] = useState("");
+  const [notification, setNotification] = useState({
+    active: false,
+    message: "",
+  });
+
+  useEffect(() => {
+    const allFieldsFilled =
+      applicantName &&
+      applicantPhoneNumber &&
+      applicantEmail &&
+      jobTitle &&
+      companyName &&
+      relevantExperience &&
+      jobDescription;
+    if (allFieldsFilled && notification.active) {
+      setNotification({ active: false, message: "" });
+    }
+  }, [
+    applicantName,
+    applicantPhoneNumber,
+    applicantEmail,
+    jobTitle,
+    companyName,
+    relevantExperience,
+    jobDescription,
+    notification,
+  ]);
+
+  const handleNotificationClose = () => {
+    setNotification({ active: false, message: "" });
+  };
 
   const addUserToDatabase = async () => {
     try {
@@ -57,6 +88,25 @@ function CoverLetter() {
   };
 
   const handleSubmit = async () => {
+    let missingFields = [];
+
+    if (!applicantName) missingFields.push("Your Name");
+    if (!applicantPhoneNumber) missingFields.push("Your Phone Number");
+    if (!applicantEmail) missingFields.push("Your Email");
+    if (!jobTitle) missingFields.push("Job Title");
+    if (!companyName) missingFields.push("Company Name");
+    if (!relevantExperience) missingFields.push("Your Resume");
+    if (!jobDescription) missingFields.push("Job Description");
+
+    if (missingFields.length) {
+      setNotification({
+        active: true,
+        message:
+          "Please fill out the following fields: " + missingFields.join(", "),
+      });
+      return;
+    }
+
     setLoading(true);
     // Instructions modifier based on tone
     let toneInstruction = "";
@@ -224,6 +274,14 @@ ${toneInstruction} ${lengthInstruction}
 
   return (
     <>
+      {notification.active && (
+        <NotificationContainer>
+          {notification.message}
+          <NotificationCloseButton onClick={handleNotificationClose}>
+            X
+          </NotificationCloseButton>
+        </NotificationContainer>
+      )}
       <AppContainer>
         <Logo src={monctoncares} alt="Icon" />
         <ContainerForSloganText>
@@ -722,6 +780,43 @@ const PreformattedTextContainer = styled.pre`
   white-space: pre-wrap;
   overflow: hidden;
   border: 1px solid #dcdcdc;
+`;
+
+const NotificationContainer = styled.div`
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: 80%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: #ff9f9f;
+  border-radius: 10px;
+  box-shadow: 0px 15px 15px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  color: black;
+  font-weight: 600;
+  transition: opacity 0.3s ease;
+
+  @media (max-width: 768px) {
+    width: 70%;
+  }
+`;
+
+const NotificationCloseButton = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #fff;
+
+  &:hover {
+    color: #e57373;
+  }
 `;
 
 export default CoverLetter;
