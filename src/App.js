@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { FaArrowUp } from "react-icons/fa";
 import CoverLetter from "./CoverLetter";
 import Resume from "./Resume";
+import { ChakraProvider } from '@chakra-ui/react'
 
 const App = () => {
   const ScrollToTop = () => {
@@ -37,10 +38,12 @@ const App = () => {
 
   return (
     <>
-      <ScrollToTop />
+      <ScrollToTop /> 
+      <ChakraProvider>
       <Routes>
         <Route path="/" element={<CoverLetter />} />
       </Routes>
+      </ChakraProvider>
     </>
   );
 };

@@ -4,6 +4,23 @@ import { OPENAI_API_KEY } from "./config.local";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import monctoncares from "./monctoncares.png";
+import {
+  Heading,
+  Button,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
+} from "@chakra-ui/react";
+import { FaChevronCircleDown } from "react-icons/fa";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -101,8 +118,7 @@ function CoverLetter() {
     if (missingFields.length) {
       setNotification({
         active: true,
-        message:
-          "Please fill out the following fields: " + missingFields.join(", "),
+        message: " " + missingFields.join(", "),
       });
       return;
     }
@@ -114,8 +130,6 @@ function CoverLetter() {
     if (language === "English") {
       if (tone === "Casual") {
         toneInstruction = "Write the cover letter in a casual style.";
-      } else if (tone === "Friendly") {
-        toneInstruction = "Write the cover letter in a friendly manner.";
       } else {
         toneInstruction = "Write the cover letter in a professional manner.";
       }
@@ -123,9 +137,6 @@ function CoverLetter() {
       if (tone === "Casual") {
         toneInstruction =
           "Rédigez la lettre de motivation dans un style informel.";
-      } else if (tone === "Friendly") {
-        toneInstruction =
-          "Rédigez la lettre de motivation d'une manière amicale.";
       } else {
         toneInstruction =
           "Rédigez la lettre de motivation d'une manière professionnelle.";
@@ -274,54 +285,60 @@ ${toneInstruction} ${lengthInstruction}
 
   return (
     <>
-      {notification.active && (
-        <NotificationContainer>
-          {notification.message}
-          <NotificationCloseButton onClick={handleNotificationClose}>
-            X
-          </NotificationCloseButton>
-        </NotificationContainer>
-      )}
       <AppContainer>
+        {notification.active && (
+          <NotificationContainer>
+            <Alert status="error">
+              <AlertIcon />
+              <AlertTitle>Please fill out the following fields:</AlertTitle>
+              <AlertDescription>{notification.message}.</AlertDescription>
+              <NotificationCloseButton onClick={handleNotificationClose}>
+                X
+              </NotificationCloseButton>
+            </Alert>
+          </NotificationContainer>
+        )}
         <Logo src={monctoncares} alt="Icon" />
         <ContainerForSloganText>
           <SloganText>CREATE YOUR COVER LETTER WITH AI</SloganText>
         </ContainerForSloganText>
         <ContentContainer>
           <FormContainer>
-            <ConfigurationContainer>
-              <div>
-                <Label>LANGUAGE</Label>
-                <DropdownSelect
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                >
-                  <option value="English">English</option>
-                  <option value="French">French</option>
-                </DropdownSelect>
-              </div>
-              <div>
-                <Label>TONE</Label>
-                <DropdownSelect
-                  value={tone}
-                  onChange={(e) => setTone(e.target.value)}
-                >
-                  <option value="Professional">Professional</option>
-                  <option value="Friendly">Friendly</option>
-                  <option value="Casual">Casual</option>
-                </DropdownSelect>
-              </div>
-              <div>
-                <Label>LENGTH</Label>
-                <DropdownSelect
-                  value={length}
-                  onChange={(e) => setLength(e.target.value)}
-                >
-                  <option value="Short">Short</option>
-                  <option value="Long">Long</option>
-                </DropdownSelect>
-              </div>
-            </ConfigurationContainer>
+            <MobileFriendlyContainer>
+              <Menu>
+                <MenuButton as={Button} rightIcon={<FaChevronCircleDown />}>
+                  Language: {language}
+                </MenuButton>
+                <MenuList>
+                  <MenuItem onClick={() => setLanguage("English")}>
+                    English
+                  </MenuItem>
+                  <MenuItem onClick={() => setLanguage("French")}>
+                    French
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+              <Menu>
+                <MenuButton as={Button} rightIcon={<FaChevronCircleDown />}>
+                  Tone: {tone}
+                </MenuButton>
+                <MenuList>
+                  <MenuItem onClick={() => setTone("Professional")}>
+                    Professional
+                  </MenuItem>
+                  <MenuItem onClick={() => setTone("Casual")}>Casual</MenuItem>
+                </MenuList>
+              </Menu>
+              <Menu>
+                <MenuButton as={Button} rightIcon={<FaChevronCircleDown />}>
+                  Length: {length}
+                </MenuButton>
+                <MenuList>
+                  <MenuItem onClick={() => setLength("Short")}>Short</MenuItem>
+                  <MenuItem onClick={() => setLength("Long")}>Long</MenuItem>
+                </MenuList>
+              </Menu>
+            </MobileFriendlyContainer>
             <FilloutSection>
               <DoubleSectionContainer>
                 <InsideSection>
@@ -381,7 +398,7 @@ ${toneInstruction} ${lengthInstruction}
                   </div>
                   <div>
                     <Label>JOB DESCRIPTION</Label>
-                    <TextareaFieldSecond
+                    <TextareaFieldThird
                       value={jobDescription}
                       onChange={(e) => setJobDescription(e.target.value)}
                     />
@@ -454,7 +471,7 @@ const Spinner = styled.div`
 
 const Logo = styled.img`
   display: block;
-  margin: 5px;
+  margin-top: 5px;
 `;
 
 const ContainerForSloganText = styled.div`
@@ -481,9 +498,9 @@ const blinkCursor = keyframes`
   }
 `;
 
-const SloganText = styled.h1`
+const SloganText = styled(Heading)`
   color: white;
-  margin-bottom: 4rem;
+  margin: 2rem;
   font-family: "Aeroport", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
@@ -512,7 +529,7 @@ const AppContainer = styled.div`
 
 const ContentContainer = styled.div`
   display: flex;
-  flex-direction: row;
+
   justify-content: space-between;
   justify-content: center;
   padding: 0 50px;
@@ -624,23 +641,6 @@ const InsideSection = styled.div`
   }
 `;
 
-const DropdownSelect = styled.select`
-  padding: 10px 15px;
-  width: 150px;
-  margin-left: 20px;
-  border: 2px solid #e0e0e0;
-  border-radius: 10px;
-  font-size: 15px;
-  appearance: none;
-  background-color: #ffffff;
-  transition: border-color 0.3s, box-shadow 0.3s;
-
-  &:hover {
-    border-color: #3498db;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.2);
-  }
-`;
-
 const CoverLetterContainer = styled.div`
   width: 50%;
   margin: 20px;
@@ -721,6 +721,10 @@ const TextareaFieldSecond = styled(TextareaField)`
   height: 300px;
 `;
 
+const TextareaFieldThird = styled(TextareaField)`
+  height: 400px;
+`;
+
 const Label = styled.label`
   text-align: left;
   color: white;
@@ -728,14 +732,24 @@ const Label = styled.label`
   font-size: 20px;
   display: block;
   margin-bottom: 10px;
+  margin-right: 10px;
+`;
+
+const MobileFriendlyContainer = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+const CustomedLabel = styled(Label)`
+  color: black;
 `;
 
 const SendButton = styled.button`
-  width: 30%;
+  padding: 20px;
   margin: 20px;
   cursor: pointer;
   background: linear-gradient(90deg, #3498db, #8e44ad);
   color: #ffffff;
+  font-size: 20px;
   border: none;
   border-radius: 4px;
   transition: background 0.3s ease;
@@ -745,8 +759,7 @@ const SendButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    width: 100%;
-    padding: 1px 0;
+    width: 80%;
   }
 `;
 
@@ -784,38 +797,32 @@ const PreformattedTextContainer = styled.pre`
 
 const NotificationContainer = styled.div`
   position: fixed;
-  top: 20%;
+  width: auto;
+  max-width: 1080px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
   z-index: 100;
-  width: 80%;
-  max-width: 600px;
-  padding: 20px;
-  background-color: #ff9f9f;
-  border-radius: 10px;
+  transform: translate(-50%, -50%);
   box-shadow: 0px 15px 15px rgba(0, 0, 0, 0.6);
-  text-align: center;
-  color: black;
-  font-weight: 600;
-  transition: opacity 0.3s ease;
 
   @media (max-width: 768px) {
-    width: 70%;
+    width: 95%;
   }
 `;
 
 const NotificationCloseButton = styled.button`
-  position: absolute;
   top: 8px;
-  right: 12px;
-  background: none;
-  border: none;
+  margin-left: 5px;
   cursor: pointer;
   font-size: 18px;
-  color: #fff;
+  color: black;
 
   &:hover {
     color: #e57373;
+  }
+
+  @media (max-width: 768px) {
+    right: 10px;
   }
 `;
 
