@@ -19,6 +19,7 @@ import {
   MenuGroup,
   MenuOptionGroup,
   MenuDivider,
+  CloseButton 
 } from "@chakra-ui/react";
 import { FaChevronCircleDown } from "react-icons/fa";
 
@@ -292,9 +293,9 @@ ${toneInstruction} ${lengthInstruction}
               <AlertIcon />
               <AlertTitle>Please fill out the following fields:</AlertTitle>
               <AlertDescription>{notification.message}.</AlertDescription>
-              <NotificationCloseButton onClick={handleNotificationClose}>
+              <CloseButton onClick={handleNotificationClose}>
                 X
-              </NotificationCloseButton>
+              </CloseButton>
             </Alert>
           </NotificationContainer>
         )}
