@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
-//import { OPENAI_API_KEY } from "./config.local";
+import { OPENAI_API_KEY } from "./config.local";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import monctoncares from "./monctoncares.png";
@@ -8,7 +8,7 @@ import monctoncares from "./monctoncares.png";
 //library for pdf.js
 import * as pdfjs from "pdfjs-dist";
 
-import {
+import {  
  Heading,
  Button,
  Alert,
@@ -209,7 +209,7 @@ ${toneInstruction} ${lengthInstruction}
    const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
-     // Authorization: `Bearer ${OPENAI_API_KEY}`,
+     Authorization: `Bearer ${OPENAI_API_KEY}`,
      "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -280,11 +280,6 @@ ${toneInstruction} ${lengthInstruction}
   pdfMake.createPdf(docDefinition).download("cover_letter.pdf");
  };
 
- // **ADDITIONS MADE BY ROBERT **
-
- //function that will parse through pdf with library: pdf.js
-
- // this will be done in <InputForPdf/>
  const parsePdf = (e) => {
   const file = e.target.files[0];
   if (file && file.type === "application/pdf") {
@@ -320,10 +315,6 @@ ${toneInstruction} ${lengthInstruction}
    alert("Please select a PDF file.");
   }
  };
-
- console.log(relevantExperience);
-
- // **ADDITIONS MADE BY ROBERT END HERE**
 
  return (
   <>
@@ -373,8 +364,6 @@ ${toneInstruction} ${lengthInstruction}
          <MenuItem onClick={() => setLength("Short")}>Short</MenuItem>
          <MenuItem onClick={() => setLength("Long")}>Long</MenuItem>
         </MenuList>
-
-        <InputForPdf onChange={parsePdf} />
        </Menu>
       </MobileFriendlyContainer>
       <FilloutSection>
@@ -407,7 +396,7 @@ ${toneInstruction} ${lengthInstruction}
           />
          </div>
          <div>
-          <Label>YOUR RESUME (copy and paste the text over here)</Label>
+          <Label>YOUR RESUME <InputForPdf onChange={parsePdf} /></Label>
           <TextareaFieldSecond
            value={relevantExperience}
            onChange={(e) => setRelevantExperience(e.target.value)}
@@ -769,11 +758,11 @@ const TextareaField = styled.textarea`
 `;
 
 const TextareaFieldSecond = styled(TextareaField)`
- height: 300px;
+ height: 200px;
 `;
 
 const TextareaFieldThird = styled(TextareaField)`
- height: 400px;
+ height: 310px;
 `;
 
 const Label = styled.label`
@@ -816,18 +805,8 @@ const InputForPdf = styled.input.attrs({
  type: "file",
  accept: ".pdf",
 })`
- margin: 20px;
- padding: 10px;
+ margin: 5px;
  cursor: pointer;
- background: linear-gradient(90deg, #3498db, #8e44ad);
- color: #ffffff;
- border: none;
- border-radius: 4px;
- transition: background-color 0.2s;
-
- &:hover {
-  background: linear-gradient(90deg, #8e44ad, #3498db);
- }
 `;
 
 const CopyButton = styled.button`
