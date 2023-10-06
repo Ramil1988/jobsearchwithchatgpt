@@ -15,11 +15,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
-  CloseButton 
+  CloseButton,
 } from "@chakra-ui/react";
 import { FaChevronCircleDown } from "react-icons/fa";
 
@@ -293,9 +289,7 @@ ${toneInstruction} ${lengthInstruction}
               <AlertIcon />
               <AlertTitle>Please fill out the following fields:</AlertTitle>
               <AlertDescription>{notification.message}.</AlertDescription>
-              <CloseButton onClick={handleNotificationClose}>
-                X
-              </CloseButton>
+              <CloseButton onClick={handleNotificationClose}>X</CloseButton>
             </Alert>
           </NotificationContainer>
         )}
@@ -522,7 +516,11 @@ const AppContainer = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
-  background: #60b9fd;
+  background: linear-gradient(
+    to right,
+    rgba(83, 200, 239, 0.8) 0%,
+    rgba(81, 106, 204, 0.8) 96%
+  );
 
   border-radius: 8px;
   padding-bottom: 50px;
@@ -538,22 +536,6 @@ const ContentContainer = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: center;
-  }
-`;
-
-const ConfigurationContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-
-  & > div {
-    flex: 1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  @media (max-width: 1300px) {
-    margin: 20px;
   }
 `;
 
@@ -586,20 +568,20 @@ const FormContainer = styled.div`
   }
 `;
 
+const fadeInUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
 const FilloutSection = styled.div`
   display: flex;
   flex-direction: row;
-`;
-
-const DoubleSectionContainer = styled.div`
-  width: 90vw;
-  display: flex;
-  flex-direction: row;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    width: 85vw;
-  }
 `;
 
 const InsideSection = styled.div`
@@ -613,7 +595,16 @@ const InsideSection = styled.div`
   padding: 20px 40px;
   border: 1px solid #e5e5e5;
   border-radius: 10px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(
+    to right,
+    rgba(83, 200, 239, 0.8) 0%,
+    rgba(81, 106, 204, 0.8) 96%
+  );
+
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+
+  opacity: 0;
+  animation: ${fadeInUp} 0.8s forwards;
 
   & > div {
     margin-bottom: 15px;
@@ -623,6 +614,7 @@ const InsideSection = styled.div`
   & > h2,
   & > h3 {
     color: white;
+    text-shadow: 2px 2px 5px rgba(81, 106, 204, 0.8);
   }
 
   h3 {
@@ -631,14 +623,37 @@ const InsideSection = styled.div`
   }
 
   &:hover {
-    border-color: #b3b3b3;
-    transform: scale(1.01);
+    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    button,
+    a {
+      box-shadow: 0 4px 6px rgba(81, 106, 204, 0.5);
+    }
   }
 
   @media (max-width: 768px) {
     width: 100%;
     margin: 10px 0;
     padding: 10px 20px;
+  }
+`;
+
+const DoubleSectionContainer = styled.div`
+  width: 90vw;
+  display: flex;
+  flex-direction: row;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 85vw;
+  }
+
+  & > ${InsideSection}:nth-child(1) {
+    animation-delay: 0.3s;
+  }
+
+  & > ${InsideSection}:nth-child(2) {
+    animation-delay: 0.9s;
   }
 `;
 
@@ -740,9 +755,6 @@ const MobileFriendlyContainer = styled.div`
   display: flex;
   gap: 10px;
 `;
-const CustomedLabel = styled(Label)`
-  color: black;
-`;
 
 const SendButton = styled.button`
   padding: 20px;
@@ -751,12 +763,14 @@ const SendButton = styled.button`
   background: linear-gradient(90deg, #3498db, #8e44ad);
   color: #ffffff;
   font-size: 20px;
-  border: none;
+  border: 1px solid #e5e5e5;
   border-radius: 4px;
   transition: background 0.3s ease;
+  box-shadow: 0 10px 6px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
 
   &:hover {
     background: linear-gradient(90deg, #8e44ad, #3498db);
+    box-shadow: 0 15px 10px rgba(81, 106, 204, 0.5);
   }
 
   @media (max-width: 768px) {
@@ -808,22 +822,6 @@ const NotificationContainer = styled.div`
 
   @media (max-width: 768px) {
     width: 95%;
-  }
-`;
-
-const NotificationCloseButton = styled.button`
-  top: 8px;
-  margin-left: 5px;
-  cursor: pointer;
-  font-size: 18px;
-  color: black;
-
-  &:hover {
-    color: #e57373;
-  }
-
-  @media (max-width: 768px) {
-    right: 10px;
   }
 `;
 
