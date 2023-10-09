@@ -19,8 +19,12 @@ import {
   MenuList,
   MenuItem,
   CloseButton,
+  Box,
 } from "@chakra-ui/react";
 import { FaChevronCircleDown } from "react-icons/fa";
+import { useDisclosure } from "@chakra-ui/react";
+import Lottie from "react-lottie";
+import * as animationData from "./animation_lni6mgip.json";
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -45,6 +49,25 @@ function CoverLetter() {
   const [confetti, setConfetti] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
   const [height, setHeight] = useState(window.innerHeight);
+  const {
+    isOpen: isAlertOpen,
+    onClose: closeAlert,
+    onOpen: showAlert,
+  } = useDisclosure();
+  const [loadingStatus, setLoadingStatus] = useState("");
+
+  const WritingAnimation = () => {
+    const defaultOptions = {
+      loop: true,
+      autoplay: true,
+      animationData: animationData.default,
+      rendererSettings: {
+        preserveAspectRatio: "xMidYMid slice",
+      },
+    };
+
+    return <Lottie options={defaultOptions} height={400} width={400} />;
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -136,6 +159,27 @@ function CoverLetter() {
     }
 
     setLoading(true);
+
+    const loadingStatuses = [
+      "Analyzing your information...",
+      "Crafting the perfect sentences...",
+      "Polishing your cover letter...",
+      "Adjusting the tone and length...",
+      "Almost there, hang tight!",
+    ];
+
+    let loadingStatusIndex = 0;
+    setLoadingStatus(loadingStatuses[loadingStatusIndex]);
+
+    const loadingInterval = setInterval(() => {
+      loadingStatusIndex += 1;
+      if (loadingStatusIndex < loadingStatuses.length) {
+        setLoadingStatus(loadingStatuses[loadingStatusIndex]);
+      } else {
+        clearInterval(loadingInterval);
+      }
+    }, 13000);
+
     // Instructions modifier based on tone
     let toneInstruction = "";
 
@@ -190,7 +234,7 @@ Details:
 Experience: ${relevantExperience}
 Job description they are applying for: ${jobDescription}.
 
-Format: Start with the applicant's name, phone number, and email at the top. Address the letter to the company and position. Include skills, experience, interest in the ${jobTitle}, and ${companyName}. Come up with ideas on why you are interested in ${companyName} and in the ${jobTitle}. Do not include Date. Adjust the cover letter to ${jobDescription} accordingly. Do not repeat the words from ${relevantExperience}, rewrite it in a different way.
+Format: Start with the applicant's name, phone number, and email at the top. Address the letter to the company and position. Include skills, experience, interest in the ${jobTitle}, and ${companyName}. Come up with ideas on why you are interested in ${companyName} and in the ${jobTitle}. Do not include Date. Adjust the cover letter to ${jobDescription} accordingly. Do not repeat anything from ${relevantExperience}, rewrite it in a different way.
 
 ${toneInstruction} ${lengthInstruction}
 `;
@@ -252,10 +296,12 @@ ${toneInstruction} ${lengthInstruction}
       const coverLetter = data.choices[0].message.content.trim();
       setCoverLetter(coverLetter);
       setConfetti(true);
-      setTimeout(() => setConfetti(false), 8000);
+      setTimeout(() => setConfetti(false), 10000);
+      showAlert();
     } catch (error) {
       console.error(error);
     } finally {
+      clearInterval(loadingInterval);
       setLoading(false);
     }
   };
@@ -341,6 +387,25 @@ ${toneInstruction} ${lengthInstruction}
         </ConfettiContainer>
       )}
       <AppContainer>
+        {isAlertOpen && (
+          <AlertSuccess>
+            <Alert status="success">
+              <AlertIcon />
+              <Box>
+                <AlertDescription>
+                  Cover letter has been generated.
+                </AlertDescription>
+              </Box>
+              <CloseButton
+                alignSelf="flex-start"
+                position="relative"
+                right={-1}
+                top={-1}
+                onClick={closeAlert}
+              />
+            </Alert>
+          </AlertSuccess>
+        )}
         {notification.active && (
           <NotificationContainer>
             <Alert status="error">
@@ -466,10 +531,8 @@ ${toneInstruction} ${lengthInstruction}
         </ContentContainer>
         {loading ? (
           <LoadingContainer>
-            <Spinner />
-            <LoadingMessage>
-              Wait, your Cover Letter is generating...
-            </LoadingMessage>
+            <WritingAnimation />
+            <LoadingMessage>{loadingStatus}</LoadingMessage>
           </LoadingContainer>
         ) : coverLetter ? (
           <CoverLetterContainer>
@@ -503,33 +566,24 @@ const ConfettiContainer = styled.div`
 `;
 
 const LoadingContainer = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 45%;
+  justify-content: center;
   gap: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
 `;
 
 const LoadingMessage = styled.p`
   font-size: 30px;
   font-weight: bold;
   color: white;
-`;
-
-const spin = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-`;
-
-const Spinner = styled.div`
-  margin: 60px auto;
-  border: 16px solid #f3f3f3;
-  border-top: 16px solid #3498db;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: ${spin} 2s linear infinite;
-  border-top-color: #3498db;
 `;
 
 const Logo = styled.img`
@@ -897,6 +951,12 @@ const NotificationContainer = styled.div`
 
   @media (max-width: 768px) {
     width: 95%;
+  }
+`;
+
+const AlertSuccess = styled(NotificationContainer)`
+  @media (max-width: 768px) {
+    width: 50%;
   }
 `;
 
