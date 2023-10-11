@@ -170,7 +170,7 @@ function CoverLetter() {
       "Analyzing your information...",
       "Crafting the perfect sentences...",
       "Polishing your cover letter...",
-      "Adjusting the tone and length...",
+      "Finalizing the formatting and design...",
       "Almost there, hang tight!",
     ];
 
@@ -240,7 +240,7 @@ Details:
 Experience: ${relevantExperience}
 Job description they are applying for: ${jobDescription}.
 
-Format: Start with the applicant's name, phone number, and email at the top. Insert the date ${currentDate}. Address the letter to the company and position. Include skills, experience, and interest in the ${jobTitle}, and ${companyName}. Share your thoughts on why you are interested in ${companyName} and in the ${jobTitle}. Adjust the cover letter to ${jobDescription} without directly copying any text. Do not repeat any information verbatim from ${relevantExperience}. Rephrase and present the information in a fresh manner.
+Format: Start with ${applicantName}, ${applicantPhoneNumber}, and ${applicantEmail} at the top. Insert the date ${currentDate}. Address the letter to the company and position. Include skills, experience, and interest in the ${jobTitle}, and ${companyName}. Share your thoughts on why you are interested in ${companyName} and in the ${jobTitle}. Adjust the cover letter to ${jobDescription} without directly copying any text. Do not repeat any information verbatim from ${relevantExperience}. Rephrase and present the information in a fresh manner.
 
 ${toneInstruction} ${lengthInstruction}
 `;
@@ -260,7 +260,7 @@ Détails :
 Expérience : ${relevantExperience}
 Description du poste pour lequel ils postulent : ${jobDescription}.
 
-Format : Commencez par le nom du candidat, son numéro de téléphone et son e-mail en haut de la page. Insérez la date ${currentDate}. Adressez la lettre à l'entreprise et au poste en question. Incluez les compétences, l'expérience, et l'intérêt pour le ${jobTitle} et pour ${companyName}. Évoquez vos raisons d'être intéressé par ${companyName} et par ${jobTitle}. Ajustez la lettre de motivation à ${jobDescription} sans copier directement le texte. Ne répétez aucune information mot pour mot de ${relevantExperience}. Reformulez et présentez l'information d'une manière nouvelle.
+Format : Commencez par ${applicantName} du candidat, ${applicantPhoneNumber} et son ${applicantEmail} en haut de la page. Insérez la date ${currentDate}. Adressez la lettre à l'entreprise et au poste en question. Incluez les compétences, l'expérience, et l'intérêt pour le ${jobTitle} et pour ${companyName}. Évoquez vos raisons d'être intéressé par ${companyName} et par ${jobTitle}. Ajustez la lettre de motivation à ${jobDescription} sans copier directement le texte. Ne répétez aucune information mot pour mot de ${relevantExperience}. Reformulez et présentez l'information d'une manière nouvelle.
 
 ${toneInstruction} ${lengthInstruction}
 `;
