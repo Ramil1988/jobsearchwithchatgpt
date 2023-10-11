@@ -1,3 +1,4 @@
+import AnimatedBackground from "./AnimatedBackground";
 import { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { OPENAI_API_KEY } from "./config.local";
@@ -393,6 +394,7 @@ ${toneInstruction} ${lengthInstruction}
 
   return (
     <>
+     <AnimatedBackground />
       {confetti && (
         <ConfettiContainer>
           <Confetti width={width} height={height} />
