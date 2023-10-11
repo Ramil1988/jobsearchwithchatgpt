@@ -140,6 +140,12 @@ function CoverLetter() {
   };
 
   const handleSubmit = async () => {
+    const currentDate = new Date().toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+
     let missingFields = [];
 
     if (!applicantName) missingFields.push("Your Name");
@@ -234,7 +240,7 @@ Details:
 Experience: ${relevantExperience}
 Job description they are applying for: ${jobDescription}.
 
-Format: Start with the applicant's name, phone number, and email at the top. Address the letter to the company and position. Include skills, experience, interest in the ${jobTitle}, and ${companyName}. Come up with ideas on why you are interested in ${companyName} and in the ${jobTitle}. Do not include Date. Adjust the cover letter to ${jobDescription} accordingly. Do not repeat anything from ${relevantExperience}, rewrite it in a different way.
+Format: Start with the applicant's name, phone number, and email at the top. Insert the date ${currentDate}. Address the letter to the company and position. Include skills, experience, and interest in the ${jobTitle}, and ${companyName}. Share your thoughts on why you are interested in ${companyName} and in the ${jobTitle}. Adjust the cover letter to ${jobDescription} without directly copying any text. Do not repeat any information verbatim from ${relevantExperience}. Rephrase and present the information in a fresh manner.
 
 ${toneInstruction} ${lengthInstruction}
 `;
@@ -252,9 +258,9 @@ Poste : ${jobTitle}
 
 Détails :
 Expérience : ${relevantExperience}
-Description du poste pour lequel ils postulent : ${jobDescription}. Adaptez la lettre de motivation à cette description en conséquence.
+Description du poste pour lequel ils postulent : ${jobDescription}.
 
-Format : Commencez par le nom du candidat, son numéro de téléphone et son e-mail en haut de la page. Adressez la lettre à l'entreprise et au poste en question. Incluez les compétences, l'expérience, l'intérêt pour le poste et pour l'entreprise. Venez avec des idées sur les raisons pour lesquelles vous êtes intéressé par ${companyName} et par ${jobTitle}.
+Format : Commencez par le nom du candidat, son numéro de téléphone et son e-mail en haut de la page. Insérez la date ${currentDate}. Adressez la lettre à l'entreprise et au poste en question. Incluez les compétences, l'expérience, et l'intérêt pour le ${jobTitle} et pour ${companyName}. Évoquez vos raisons d'être intéressé par ${companyName} et par ${jobTitle}. Ajustez la lettre de motivation à ${jobDescription} sans copier directement le texte. Ne répétez aucune information mot pour mot de ${relevantExperience}. Reformulez et présentez l'information d'une manière nouvelle.
 
 ${toneInstruction} ${lengthInstruction}
 `;
@@ -293,7 +299,13 @@ ${toneInstruction} ${lengthInstruction}
       }
 
       const data = await response.json();
-      const coverLetter = data.choices[0].message.content.trim();
+      let coverLetter = data.choices[0].message.content.trim();
+      if (language === "French") {
+        coverLetter = coverLetter.replace("[Date d'aujourd'hui]", currentDate);
+      } else {
+        coverLetter = coverLetter.replace("[Today's Date]", currentDate);
+      }
+
       setCoverLetter(coverLetter);
       setConfetti(true);
       setTimeout(() => setConfetti(false), 10000);
@@ -425,7 +437,7 @@ ${toneInstruction} ${lengthInstruction}
             <MobileFriendlyContainer>
               <Menu>
                 <MenuButton as={Button} rightIcon={<FaChevronCircleDown />}>
-                  Language: {language}
+                  Language of Cover letter: {language}
                 </MenuButton>
                 <MenuList>
                   <MenuItem onClick={() => setLanguage("English")}>
@@ -436,7 +448,7 @@ ${toneInstruction} ${lengthInstruction}
                   </MenuItem>
                 </MenuList>
               </Menu>
-              <Menu>
+              {/* <Menu>
                 <MenuButton as={Button} rightIcon={<FaChevronCircleDown />}>
                   Tone: {tone}
                 </MenuButton>
@@ -455,7 +467,7 @@ ${toneInstruction} ${lengthInstruction}
                   <MenuItem onClick={() => setLength("Short")}>Short</MenuItem>
                   <MenuItem onClick={() => setLength("Long")}>Long</MenuItem>
                 </MenuList>
-              </Menu>
+              </Menu> */}
             </MobileFriendlyContainer>
             <FilloutSection>
               <DoubleSectionContainer>
